@@ -1,0 +1,46 @@
+{
+  "icon": {
+    "name": "Tina"
+  },
+  "logo": "/uploads/header/photo_2026-01-04_21-33-20.jpg",
+  "name": "ШПАГАТ ПРОСТО",
+  "subtitle": "студия растяжки",
+  "phone": "+7 (995) 288 68 92",
+  "color": "default",
+  "nav": [
+    {
+      "href": "#about",
+      "label": "о нас"
+    },
+    {
+      "href": "#direction",
+      "label": "направления"
+    },
+    {
+      "href": "#tickets",
+      "label": "абонементы"
+    },
+    {
+      "href": "#contacts",
+      "label": "контакты"
+    }
+  ],
+  "social": [
+    {
+      "icon": {
+        "name": "FaWhatsapp",
+        "color": "default",
+        "style": "regular"
+      },
+      "url": "https://wa.me/79885100880?text=Добрый день."
+    },
+    {
+      "icon": {
+        "name": "Vk",
+        "color": "default",
+        "style": "regular"
+      },
+      "url": "https://vk.com/shpagatprosto"
+    }
+  ]
+}

@@ -1,33 +1,7 @@
 {
-  "header": {
-    "icon": {
-      "name": "Tina",
-      "color": "blue",
-      "style": "float"
-    },
-    "name": "Seyla Fit",
-    "color": "default",
-    "nav": [
-      {
-        "href": "/",
-        "label": "Главная"
-      },
-      {
-        "href": "/about",
-        "label": "О нас"
-      }
-    ]
-  },
-  "footer": {
-    "social": []
-  },
   "theme": {
     "color": "blue",
     "font": "sans",
     "darkMode": "light"
-  },
-  "colors": {
-    "primary": "#160D80",
-    "secondary": "#FF8A73"
   }
 }

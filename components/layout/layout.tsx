@@ -9,24 +9,27 @@ type LayoutProps = PropsWithChildren & {
 };
 
 export default async function Layout({ children, rawPageData }: LayoutProps) {
-  const { data: globalData } = await client.queries.global({
-    relativePath: "index.json",
-  },
-    {
-      fetchOptions: {
-        next: {
-          revalidate: 60,
-        },
-      }
-    }
-  );
+  const [globalData, headerData, footerData] = await Promise.all([
+    client.queries.global({
+      relativePath: "index.json",
+    }),
+    client.queries.header({
+      relativePath: "index.json",
+    }),
+    client.queries.footer({
+      relativePath: "index.json",
+    }),
+  ]);
 
   return (
-    <LayoutProvider globalSettings={globalData.global} pageData={rawPageData}>
+    <LayoutProvider
+      theme={globalData.data.global.theme}
+      header={headerData.data.header}
+      footer={footerData.data.footer}
+      pageData={rawPageData}
+    >
       <Header />
-      <main className="overflow-x-hidden pt-20">
-        {children}
-      </main>
+      <main className="overflow-x-hidden pt-20">{children}</main>
       <Footer />
     </LayoutProvider>
   );
