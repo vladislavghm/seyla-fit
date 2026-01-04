@@ -13,51 +13,44 @@ export const Header = () => {
   if (!header) return null;
 
   const [menuState, setMenuState] = React.useState(false);
+  const backgroundColor = header.backgroundColor || "#ebebeb";
 
   return (
     <header>
       <nav
         data-state={menuState && "active"}
-        className="bg-[#ebebeb] fixed z-20 w-full"
+        className="fixed z-20 w-full"
+        style={{ backgroundColor }}
       >
-        <div className="mx-auto max-w-7xl px-6 transition-all duration-300">
+        <div className="mx-auto w-full max-w-full px-4 sm:px-6 lg:px-8 transition-all duration-300">
           <div className="relative flex items-center justify-between gap-6 py-4">
             {/* Logo */}
-            <div className="shrink-0 min-w-[343px]">
+            <div className="shrink-0">
               <Link href="/" aria-label="home" className="flex flex-col">
-                {header.logo ? (
+                {header.logo && (
                   <Image
                     src={header.logo}
-                    alt={header.name || "Logo"}
-                    width={200}
+                    alt="Logo"
+                    width={100}
                     height={40}
                     className="h-auto max-h-[40px] w-auto object-contain"
                   />
-                ) : (
-                  <>
-                    {header.name && (
-                      <span className="text-foreground font-medium leading-tight">
-                        {header.name}
-                      </span>
-                    )}
-                    {header.subtitle && (
-                      <span className="text-foreground text-sm leading-tight">
-                        {header.subtitle}
-                      </span>
-                    )}
-                  </>
                 )}
               </Link>
             </div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex flex-1 justify-center">
-              <ul className="flex items-center gap-8 text-sm">
+            {/* Desktop Navigation - центрированная */}
+            <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2">
+              <ul
+                className="flex items-center gap-8"
+                style={{ fontSize: "16px" }}
+              >
                 {header.nav!.map((item, index) => (
                   <li key={index}>
                     <Link
                       href={item!.href!}
-                      className="text-foreground hover:opacity-70 block duration-150"
+                      className="text-foreground hover:opacity-70 block duration-150 font-semibold"
+                      style={{ fontWeight: 600 }}
                     >
                       <span>{item!.label}</span>
                     </Link>
@@ -71,21 +64,27 @@ export const Header = () => {
               {/* Social Links */}
               {header.social && header.social.length > 0 && (
                 <div className="flex items-center gap-3">
-                  {header.social.map((social, index) => (
-                    <Link
-                      key={index}
-                      href={social!.url!}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-foreground hover:opacity-70 transition-opacity"
-                      aria-label={social!.icon?.name || "Social link"}
-                    >
-                      <Icon
-                        data={{ ...social!.icon, size: "small" }}
-                        className="w-[30px] h-[30px]"
-                      />
-                    </Link>
-                  ))}
+                  {header.social.map((social, index) => {
+                    if (!social!.icon?.name) return null;
+                    const iconData = {
+                      name: social!.icon.name,
+                      size: "small" as const,
+                      ...(social!.icon.color && { color: social!.icon.color }),
+                      ...(social!.icon.style && { style: social!.icon.style }),
+                    };
+                    return (
+                      <Link
+                        key={index}
+                        href={social!.url!}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-foreground hover:opacity-70 transition-opacity"
+                        aria-label={social!.icon.name || "Social link"}
+                      >
+                        <Icon data={iconData} className="w-[30px] h-[30px]" />
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
 
@@ -113,8 +112,11 @@ export const Header = () => {
         </div>
 
         {/* Mobile Menu */}
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="bg-[#ebebeb] in-data-[state=active]:block lg:hidden mb-6 hidden w-full rounded-3xl border border-border/50 p-6 shadow-lg">
+        <div className="mx-auto w-full max-w-full px-4 sm:px-6 lg:px-8">
+          <div
+            className="in-data-[state=active]:block lg:hidden mb-6 hidden w-full rounded-3xl border border-border/50 p-6 shadow-lg"
+            style={{ backgroundColor }}
+          >
             <ul className="space-y-6 text-base">
               {header.nav?.map((item, index) => (
                 <li key={index}>

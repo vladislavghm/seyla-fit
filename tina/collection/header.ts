@@ -1,5 +1,6 @@
 import type { Collection } from "tinacms";
 import { iconSchema } from "../fields/icon";
+import { ColorPickerInput } from "../fields/colorPicker";
 
 const Header: Collection = {
   label: "Шапка",
@@ -15,8 +16,18 @@ const Header: Collection = {
   },
   fields: [
     {
+      type: "string",
+      label: "Цвет фона",
+      name: "backgroundColor",
+      description: "Цвет фона шапки",
+      ui: {
+        // @ts-ignore
+        component: ColorPickerInput,
+      },
+    },
+    {
       type: "image",
-      label: "Logo",
+      label: "Логотип",
       name: "logo",
       description: "Логотип (изображение)",
       // @ts-ignore
@@ -24,34 +35,13 @@ const Header: Collection = {
     },
     {
       type: "string",
-      label: "Name",
-      name: "name",
-      description: "Название (текст, если нет логотипа)",
-    },
-    {
-      type: "string",
-      label: "Subtitle",
-      name: "subtitle",
-      description: "Подзаголовок под названием (например, 'студия растяжки')",
-    },
-    {
-      type: "string",
-      label: "Phone",
+      label: "Телефон",
       name: "phone",
       description: "Номер телефона (например, '+7 (988) 510 08 80')",
     },
     {
-      type: "string",
-      label: "Color",
-      name: "color",
-      options: [
-        { label: "Default", value: "default" },
-        { label: "Primary", value: "primary" },
-      ],
-    },
-    {
       type: "object",
-      label: "Nav Links",
+      label: "Навигация",
       name: "nav",
       list: true,
       ui: {
@@ -66,19 +56,19 @@ const Header: Collection = {
       fields: [
         {
           type: "string",
-          label: "Link",
+          label: "Ссылка",
           name: "href",
         },
         {
           type: "string",
-          label: "Label",
+          label: "Название",
           name: "label",
         },
       ],
     },
     {
       type: "object",
-      label: "Social Links",
+      label: "Социальные сети",
       name: "social",
       list: true,
       ui: {
@@ -90,7 +80,7 @@ const Header: Collection = {
         iconSchema as any,
         {
           type: "string",
-          label: "Url",
+          label: "Ссылка",
           name: "url",
         },
       ],

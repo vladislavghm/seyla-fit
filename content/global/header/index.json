@@ -1,12 +1,7 @@
 {
-  "icon": {
-    "name": "Tina"
-  },
+  "backgroundColor": "#ebebeb",
   "logo": "/uploads/header/photo_2026-01-04_21-33-20.jpg",
-  "name": "ШПАГАТ ПРОСТО",
-  "subtitle": "студия растяжки",
   "phone": "+7 (995) 288 68 92",
-  "color": "default",
   "nav": [
     {
       "href": "#about",
