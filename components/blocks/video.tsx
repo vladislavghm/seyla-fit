@@ -3,8 +3,7 @@ import * as React from 'react';
 import dynamic from 'next/dynamic';
 import type { Template } from 'tinacms';
 import { PageBlocksVideo } from '@/tina/__generated__/types';
-import { Section } from '../layout/section';
-import { sectionBlockSchemaField } from '../layout/section';
+import { Section, sectionBlockSchemaField } from '@/components/layout/section';
 
 const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 

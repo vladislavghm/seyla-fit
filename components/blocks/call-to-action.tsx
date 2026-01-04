@@ -1,11 +1,11 @@
 import Link from 'next/link'
 import type { Template } from 'tinacms';
 import { tinaField } from 'tinacms/dist/react';
-import { iconSchema } from '@/tina/fields/icon';
 import { Button } from '@/components/ui/button'
 import { PageBlocksCta } from '@/tina/__generated__/types';
-import { Icon } from '../icon';
-import { Section } from '../layout/section';
+import { Icon } from '@/components/icon';
+import { Section } from '@/components/layout/section';
+import { iconSchema } from '@/tina/fields/icon';
 
 export const CallToAction = ({ data }: { data: PageBlocksCta }) => {
     return (
@@ -37,7 +37,6 @@ export const CallToAction = ({ data }: { data: PageBlocksCta }) => {
         </Section>
     )
 }
-
 
 export const ctaBlockSchema: Template = {
     name: "cta",

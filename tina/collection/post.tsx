@@ -1,46 +1,46 @@
-import React from 'react';
-import { videoBlockSchema } from '@/components/blocks/video';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import type { Collection } from 'tinacms';
+import React from "react";
+import { videoBlockSchema } from "@/components/blocks/video";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Collection } from "tinacms";
 
 const Post: Collection = {
-  label: 'Blog Posts',
-  name: 'post',
-  path: 'content/posts',
-  format: 'mdx',
+  label: "Blog Posts",
+  name: "post",
+  path: "content/posts",
+  format: "mdx",
   ui: {
     router: ({ document }) => {
-      return `/posts/${document._sys.breadcrumbs.join('/')}`;
+      return `/posts/${document._sys.breadcrumbs.join("/")}`;
     },
   },
   fields: [
     {
-      type: 'string',
-      label: 'Title',
-      name: 'title',
+      type: "string",
+      label: "Title",
+      name: "title",
       isTitle: true,
       required: true,
     },
     {
-      type: 'image',
-      name: 'heroImg',
-      label: 'Hero Image',
+      type: "image",
+      name: "heroImg",
+      label: "Hero Image",
       // @ts-ignore
-      uploadDir: () => 'posts',
+      uploadDir: () => "posts",
     },
     {
-      type: 'rich-text',
-      label: 'Excerpt',
-      name: 'excerpt',
+      type: "rich-text",
+      label: "Excerpt",
+      name: "excerpt",
       overrides: {
-        toolbar: ['bold', 'italic', 'link'],
+        toolbar: ["bold", "italic", "link"],
       },
     },
     {
-      type: 'reference',
-      label: 'Author',
-      name: 'author',
-      collections: ['author'],
+      type: "reference",
+      label: "Author",
+      name: "author",
+      collections: ["author"],
       ui: {
         //@ts-ignore
         optionComponent: (
@@ -54,14 +54,14 @@ const Post: Collection = {
           if (!name) return _internalSys.path;
 
           return (
-            <p className='flex min-h-8 items-center gap-4'>
+            <p className="flex min-h-8 items-center gap-4">
               <Avatar>
                 {avatar && <AvatarImage src={avatar} alt={`${name} Profile`} />}
                 <AvatarFallback>
                   {name
-                    .split(' ')
-                    .map((part) => part[0]?.toUpperCase() || '')
-                    .join('')}
+                    .split(" ")
+                    .map((part) => part[0]?.toUpperCase() || "")
+                    .join("")}
                 </AvatarFallback>
               </Avatar>
               {name}
@@ -71,25 +71,25 @@ const Post: Collection = {
       },
     },
     {
-      type: 'datetime',
-      label: 'Posted Date',
-      name: 'date',
+      type: "datetime",
+      label: "Posted Date",
+      name: "date",
       ui: {
-        dateFormat: 'MMMM DD YYYY',
-        timeFormat: 'hh:mm A',
+        dateFormat: "MMMM DD YYYY",
+        timeFormat: "hh:mm A",
       },
     },
     {
-      type: 'object',
-      label: 'Tags',
-      name: 'tags',
+      type: "object",
+      label: "Tags",
+      name: "tags",
       list: true,
       fields: [
         {
-          type: 'reference',
-          label: 'Tag',
-          name: 'tag',
-          collections: ['tag'],
+          type: "reference",
+          label: "Tag",
+          name: "tag",
+          collections: ["tag"],
           ui: {
             optionComponent: (
               props: {
@@ -107,74 +107,74 @@ const Post: Collection = {
       },
     },
     {
-      type: 'rich-text',
-      label: 'Body',
-      name: '_body',
+      type: "rich-text",
+      label: "Body",
+      name: "_body",
       templates: [
         {
-          name: 'BlockQuote',
-          label: 'Block Quote',
+          name: "BlockQuote",
+          label: "Block Quote",
           fields: [
             {
-              name: 'children',
-              label: 'Quote',
-              type: 'rich-text',
+              name: "children",
+              label: "Quote",
+              type: "rich-text",
               overrides: {
-                toolbar: ['bold', 'italic', 'link'],
+                toolbar: ["bold", "italic", "link"],
               },
             },
             {
-              name: 'authorName',
-              label: 'Author',
-              type: 'string',
+              name: "authorName",
+              label: "Author",
+              type: "string",
             },
           ],
         },
         {
-          name: 'DateTime',
-          label: 'Date & Time',
+          name: "DateTime",
+          label: "Date & Time",
           inline: true,
           fields: [
             {
-              name: 'format',
-              label: 'Format',
-              type: 'string',
-              options: ['utc', 'iso', 'local'],
+              name: "format",
+              label: "Format",
+              type: "string",
+              options: ["utc", "iso", "local"],
             },
           ],
         },
         {
-          name: 'NewsletterSignup',
-          label: 'Newsletter Sign Up',
+          name: "NewsletterSignup",
+          label: "Newsletter Sign Up",
           fields: [
             {
-              name: 'children',
-              label: 'CTA',
-              type: 'rich-text',
+              name: "children",
+              label: "CTA",
+              type: "rich-text",
             },
             {
-              name: 'placeholder',
-              label: 'Placeholder',
-              type: 'string',
+              name: "placeholder",
+              label: "Placeholder",
+              type: "string",
             },
             {
-              name: 'buttonText',
-              label: 'Button Text',
-              type: 'string',
+              name: "buttonText",
+              label: "Button Text",
+              type: "string",
             },
             {
-              name: 'disclaimer',
-              label: 'Disclaimer',
-              type: 'rich-text',
+              name: "disclaimer",
+              label: "Disclaimer",
+              type: "rich-text",
               overrides: {
-                toolbar: ['bold', 'italic', 'link'],
+                toolbar: ["bold", "italic", "link"],
               },
             },
           ],
           ui: {
             defaultItem: {
-              placeholder: 'Enter your email',
-              buttonText: 'Notify Me',
+              placeholder: "Enter your email",
+              buttonText: "Notify Me",
             },
           },
         },

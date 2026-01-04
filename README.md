@@ -1,112 +1,267 @@
-# Tina Starter 🦙
+# Seyla Fit 🦙
 
-![tina-nextjs-starter-demo](https://user-images.githubusercontent.com/103008/130587027-995ccc45-a852-4f90-b658-13e8e0517339.gif)
+Next.js проект с [TinaCMS](https://app.tina.io) для визуального редактирования контента в реальном времени.
 
-This Next.js starter is powered by [TinaCMS](https://app.tina.io) for you and your team to visually live edit the structured content of your website. ✨
+Контент хранится в Markdown и JSON файлах в репозитории и запрашивается через Tina GraphQL API.
 
-The content is managed through Markdown and JSON files stored in your GitHub repository, and queried through Tina GraphQL API.
+## Быстрый старт
 
-### Features
+**Требования:**
 
-- [Tina Headless CMS](https://app.tina.io) for authentication, content modeling, visual editing and team management.
-- [Vercel](https://vercel.com) deployment to visually edit your site from the `/admin` route.
-- Local development workflow from the filesystem with a local GraqhQL server.
+- Node.js 18+
+- pnpm
+- Аккаунт [TinaCMS](https://app.tina.io)
 
-## Requirements
+**Установка:**
 
-- Git, [Node.js Active LTS](https://nodejs.org/en/about/releases/), pnpm installed for local development.
-- A [TinaCMS](https://app.tina.io) account for live editing.
-
-## Local Development
-
-Install the project's dependencies:
-
-> [!NOTE]  
-> [Do you know the best package manager for Node.js?](https://www.ssw.com.au/rules/best-package-manager-for-node/) Using the right package manager can greatly enhance your development workflow. We recommend using pnpm for its speed and efficient handling of dependencies. Learn more about why pnpm might be the best choice for your projects by checking out this rule from SSW.
-
-
-```
+```bash
 pnpm install
 ```
 
-Run the project locally:
+**Запуск:**
 
-```
+```bash
 pnpm dev
 ```
 
-### Local URLs
+**URL:**
 
-- http://localhost:3000 : browse the website
-- http://localhost:3000/admin : connect to Tina Cloud and go in edit mode
-- http://localhost:3000/exit-admin : log out of Tina Cloud
-- http://localhost:4001/altair/ : GraphQL playground to test queries and browse the API documentation
+- http://localhost:3000 - сайт
+- http://localhost:3000/admin - админка Tina CMS
+- http://localhost:4001/altair/ - GraphQL playground
 
-## Deployment
+## Настройка
 
-### GitHub Pages
+### 1. Создать аккаунт Tina Cloud
 
-This starter can be deployed to GitHub Pages. A GitHub Actions workflow is included that handles the build and deployment process. 
+1. Перейдите на [https://app.tina.io](https://app.tina.io)
+2. Создайте аккаунт или войдите
+3. Создайте новый проект
+4. Получите:
+   - `NEXT_PUBLIC_TINA_CLIENT_ID`
+   - `TINA_TOKEN`
 
-To deploy to GitHub Pages:
+### 2. Настроить переменные окружения
 
-1. In your repository settings, ensure GitHub Pages is enabled and set to deploy from the `gh-pages` branch
-2. Push changes to your main branch - the workflow will automatically build and deploy the site
+Создайте файл `.env.local` в корне проекта:
 
-> [!NOTE]
-> When deploying to GitHub Pages, you'll need to update your secrets in Settings | Secrets and variables | Actions to include:
-> - `NEXT_PUBLIC_TINA_CLIENT_ID`
-> - `TINA_TOKEN`
+```env
+NEXT_PUBLIC_TINA_CLIENT_ID=ваш_client_id
+TINA_TOKEN=ваш_token
+NEXT_PUBLIC_TINA_BRANCH=main
+```
+
+> **Важно:**
 >
-> You get these from your TinaCloud project - [read the docs](https://tina.io/docs/tina-cloud/deployment-options/github-pages)
+> - `.env.local` уже в `.gitignore`, поэтому не попадёт в Git
+> - Для продакшена используйте переменные окружения вашего хостинга (Vercel, Netlify и т.д.)
+> - Ключи можно получить в [Tina Cloud Dashboard](https://app.tina.io)
 
-> [!IMPORTANT]
-> GitHub Pages does not support server side code, so this will run as a static site. If you don't want to deploy to GitHub pages, just delete `.github/workflows/build-and-deploy.yml`
+### 3. Сгенерировать Tina файлы
 
-### Building the Starter Locally (Using the hosted content API)
-
-Replace the `.env.example`, with `.env`
-
-```
-NEXT_PUBLIC_TINA_CLIENT_ID=<get this from the project you create at app.tina.io>
-TINA_TOKEN=<get this from the project you create at app.tina.io>
-NEXT_PUBLIC_TINA_BRANCH=<Specify the branch with Tina configured>
-```
-
-Build the project:
+После настройки переменных окружения выполните:
 
 ```bash
-pnpm build
+pnpm dev
 ```
 
-## Getting Help
+Или если хотите только сгенерировать файлы:
 
-To get help with any TinaCMS challenges you may have:
+```bash
+npx tinacms build
+```
 
-- Visit the [documentation](https://tina.io/docs/) to learn about Tina.
-- [Join our Discord](https://discord.gg/zumN63Ybpf) to share feedback.
-- Visit the [community forum](https://community.tinacms.org/) to ask questions.
-- Get support through the chat widget on the TinaCMS Dashboard
-- [Email us](mailto:support@tina.io) to schedule a call with our team and share more about your context and what you're trying to achieve.
-- [Search or open an issue](https://github.com/tinacms/tinacms/issues) if something is not working.
-- Reach out on Twitter at [@tina_cms](https://twitter.com/tina_cms).
+Это создаст:
 
-## Development tips
+- `tina/__generated__/` - сгенерированные типы и клиент
+- Типы TypeScript для ваших коллекций
 
-### Visual Studio Code GraphQL extension
+### 4. Проверка что всё работает
 
-[Install the GraphQL extension](https://marketplace.visualstudio.com/items?itemName=GraphQL.vscode-graphql) to benefit from type auto-completion.
+После запуска `pnpm dev`:
 
-### Typescript
+1. **Откройте** http://localhost:3000
 
-A good way to ensure your components match the shape of your data is to leverage the auto-generated TypeScript types.
-These are rebuilt when your `tina` config changes.
+   - Должна загрузиться главная страница
 
-## LICENSE
+2. **Откройте** http://localhost:3000/admin
 
-Licensed under the [Apache 2.0 license](./LICENSE).
+   - Должен открыться Tina CMS интерфейс
+   - Можете войти через Tina Cloud аккаунт
 
+3. **Проверьте консоль** - не должно быть ошибок
 
-# Repository cleaned of LFS content
-# Repository cleaned of LFS content - Wed Sep 17 15:00:42 AEST 2025
+## Деплой на продакшен (Vercel/Netlify)
 
+### Безопасность админки `/admin`
+
+**Важно:** Страница `/admin` доступна по публичной ссылке, но защищена аутентификацией.
+
+**Как это работает:**
+
+1. **Любой может открыть** `https://ваш-сайт.vercel.app/admin`
+2. **При открытии** пользователь увидит форму входа Tina Cloud
+3. **Вход происходит через OAuth** - нужен аккаунт в Tina Cloud
+4. **Только пользователи с доступом** к вашему проекту в Tina Cloud могут редактировать контент
+
+**Управление доступом:**
+
+- Добавьте пользователей в проект через [Tina Cloud Dashboard](https://app.tina.io)
+- Выберите проект → Settings → Collaborators
+- Пригласите пользователей по email - они получат доступ для редактирования
+
+**Дополнительная защита (опционально):**
+
+Для тестовых стендов можно добавить дополнительную защиту:
+
+- **Vercel Password Protection** (для Preview deployments):
+
+  - Settings → Deployment Protection → Password Protection
+  - Установите пароль для preview deployments
+
+- **Базовая HTTP аутентификация** через middleware (требует настройки)
+
+> **Рекомендация:** Для большинства случаев встроенной OAuth аутентификации Tina Cloud достаточно. Просто добавьте нужных пользователей в проект через Tina Cloud Dashboard.
+
+## Структура проекта
+
+### Когда создавать страницы в `app/`?
+
+Страницы в `app/` нужны для:
+
+1. **Статические/специальные страницы** (не из CMS):
+
+   - `app/page.tsx` - главная страница (статическая обработка)
+   - `app/not-found.tsx` - страница 404
+   - `app/posts/page.tsx` - список постов (статическая страница)
+
+2. **Новые группы страниц** с отдельной логикой:
+
+   ```
+   app/
+     posts/              # Группа страниц постов
+       page.tsx          # Список постов
+       [...urlSegments]/ # Отдельные посты
+   ```
+
+3. **Служебные страницы**:
+   - `app/layout.tsx` - общий layout
+   - `app/loading.tsx` - загрузка
+   - `app/error.tsx` - ошибки
+
+### Когда создавать контент в `content/pages/`?
+
+Контентные страницы, управляемые через Tina CMS:
+
+- `content/pages/home.mdx` → `/` (через `app/[...urlSegments]/page.tsx`)
+- `content/pages/about.mdx` → `/about` (через `app/[...urlSegments]/page.tsx`)
+- `content/pages/contacts.mdx` → `/contacts` (через `app/[...urlSegments]/page.tsx`)
+
+Эти страницы:
+
+- Редактируются в админке Tina CMS (`/admin`)
+- Обрабатываются универсальным роутом `app/[...urlSegments]/page.tsx`
+- Могут использовать блоки из `components/blocks/`
+
+### Когда что-то менять в `tina/`?
+
+Директория `tina/` содержит конфигурацию и схемы Tina CMS. Обычно там нужно что-то менять, когда:
+
+1. **Добавляете новый тип контента** (коллекцию):
+
+   - Создайте файл в `tina/collection/` (например, `product.ts`)
+   - Добавьте коллекцию в `tina/config.tsx`
+
+2. **Изменяете структуру существующих коллекций**:
+
+   - Редактируйте файлы в `tina/collection/` (например, `page.ts`, `post.tsx`)
+   - Добавляйте/удаляйте поля в схемах
+
+3. **Добавляете кастомные поля**:
+
+   - Создайте файл в `tina/fields/` (например, `price.tsx`)
+   - Используйте его в коллекциях
+
+4. **Настраиваете конфигурацию**:
+   - Редактируйте `tina/config.tsx` (например, настройки медиа, пути и т.д.)
+
+> **Важно:**
+>
+> - Файлы в `tina/__generated__/` автогенерируются - не редактируйте их вручную!
+> - После изменений в `tina/collection/` запустите `pnpm dev` для регенерации типов
+> - `tina/queries/` - опциональная папка для кастомных GraphQL запросов (обычно не нужна, всё генерируется автоматически)
+
+### Структура директорий
+
+```
+app/
+  page.tsx                    # Статическая главная
+  [...urlSegments]/page.tsx   # Универсальный роут для CMS страниц
+  posts/                       # Группа страниц постов
+    page.tsx                  # Список постов
+    [...urlSegments]/page.tsx # Отдельные посты
+
+content/
+  pages/                      # Контентные страницы (CMS)
+    home.mdx                  # → /
+    about.mdx                 # → /about
+    contacts.mdx              # → /contacts
+  posts/                      # Посты блога (CMS)
+    ...
+
+components/
+  blocks/                     # Блоки для страниц
+    hero.tsx                  # Компонент + схема
+    content.tsx
+    ...
+
+tina/
+  config.tsx                  # Главная конфигурация Tina CMS
+  collection/                 # Коллекции (схемы данных)
+    page.ts                   # Схема страниц
+    post.tsx                  # Схема постов
+    author.ts                 # Схема авторов
+    tag.ts                    # Схема тегов
+    global.ts                 # Глобальные настройки
+  fields/                     # Кастомные поля
+    icon.tsx                  # Поле иконки
+    color.tsx                 # Поле цвета
+  __generated__/              # Автогенерируемые файлы (не редактировать!)
+  queries/                    # Кастомные GraphQL запросы (опционально)
+```
+
+## Команды
+
+```bash
+pnpm dev      # Запуск dev сервера
+pnpm build    # Сборка для продакшена
+pnpm start    # Запуск продакшен версии
+pnpm lint     # Проверка кода
+```
+
+## Частые проблемы
+
+### Ошибка "NEXT_PUBLIC_TINA_CLIENT_ID is not defined"
+
+- **Решение:** Создайте `.env.local` файл с переменными окружения
+
+### Ошибка "Cannot find module '@/tina/**generated**/client'"
+
+- **Решение:** Запустите `pnpm dev` или `npx tinacms build` для генерации файлов
+
+### Ошибка "TINA_TOKEN is invalid"
+
+- **Решение:** Проверьте токен в Tina Cloud dashboard
+
+### Страница `/admin` не открывается
+
+- **Решение:** Убедитесь, что запущен `pnpm dev` (не просто `next dev`)
+
+## Помощь
+
+- [Документация Tina CMS](https://tina.io/docs/)
+- [Tina Cloud Dashboard](https://app.tina.io)
+- [Next.js App Router Docs](https://nextjs.org/docs/app)
+- [Tina + Next.js Tutorial](https://tina.io/docs/guides/nextjs/overview/)
+- [Discord](https://discord.gg/zumN63Ybpf)
+- [Форум](https://community.tinacms.org/)

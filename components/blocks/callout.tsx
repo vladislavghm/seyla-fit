@@ -4,8 +4,8 @@ import type { Template } from 'tinacms';
 import { tinaField } from 'tinacms/dist/react';
 import { PageBlocksCallout } from '@/tina/__generated__/types';
 import { ArrowRight } from 'lucide-react';
-import { AnimatedGroup } from '../motion-primitives/animated-group';
-import { Section, sectionBlockSchemaField } from '../layout/section';
+import { AnimatedGroup } from '@/components/motion-primitives/animated-group';
+import { Section, sectionBlockSchemaField } from '@/components/layout/section';
 import type { Transition } from 'motion/react';
 
 const transitionVariants = {

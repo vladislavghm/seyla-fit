@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 
-const MermaidElement = dynamic(() => import('../mermaid-renderer'), {
+const MermaidElement = dynamic(() => import('@/components/mermaid-renderer'), {
   ssr: false,
   loading: () => <div>Loading diagram...</div>,
 });
