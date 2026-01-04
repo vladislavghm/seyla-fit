@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Icon } from "../../icon";
 import { useLayout } from "../layout-context";
 import { Menu, X } from "lucide-react";
+import { normalizeIconData } from "@/lib/icon-utils";
 
 export const Header = () => {
   const { header, theme } = useLayout();
@@ -65,21 +66,16 @@ export const Header = () => {
               {header.social && header.social.length > 0 && (
                 <div className="flex items-center gap-3">
                   {header.social.map((social, index) => {
-                    if (!social!.icon?.name) return null;
-                    const iconData = {
-                      name: social!.icon.name,
-                      size: "small" as const,
-                      ...(social!.icon.color && { color: social!.icon.color }),
-                      ...(social!.icon.style && { style: social!.icon.style }),
-                    };
+                    const iconData = normalizeIconData(social?.icon, "small");
+                    if (!iconData || !social?.url) return null;
                     return (
                       <Link
                         key={index}
-                        href={social!.url!}
+                        href={social.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-foreground hover:opacity-70 transition-opacity"
-                        aria-label={social!.icon.name || "Social link"}
+                        aria-label={iconData.name || "Social link"}
                       >
                         <Icon data={iconData} className="w-[30px] h-[30px]" />
                       </Link>

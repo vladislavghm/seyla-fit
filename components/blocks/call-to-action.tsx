@@ -6,6 +6,7 @@ import { PageBlocksCta } from "@/tina/__generated__/types";
 import { Icon } from "@/components/icon";
 import { Section } from "@/components/layout/section";
 import { iconSchema } from "@/tina/fields/icon";
+import { normalizeIconData } from "@/lib/icon-utils";
 
 export const CallToAction = ({ data }: { data: PageBlocksCta }) => {
   return (
@@ -24,13 +25,7 @@ export const CallToAction = ({ data }: { data: PageBlocksCta }) => {
         <div className="mt-12 flex flex-wrap justify-center gap-4">
           {data.actions &&
             data.actions.map((action) => {
-              const iconData = action?.icon?.name
-                ? {
-                    name: action.icon.name,
-                    ...(action.icon.color && { color: action.icon.color }),
-                    ...(action.icon.style && { style: action.icon.style }),
-                  }
-                : null;
+              const iconData = normalizeIconData(action?.icon);
 
               return (
                 <div

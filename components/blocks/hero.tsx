@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import HeroVideoDialog from "@/components/ui/hero-video-dialog";
 import { Transition } from "motion/react";
 import { iconSchema } from "@/tina/fields/icon";
+import { normalizeIconData } from "@/lib/icon-utils";
 const transitionVariants = {
   container: {
     visible: {
@@ -95,25 +96,29 @@ export const Hero = ({ data }: { data: PageBlocksHero }) => {
           className="mt-12 flex flex-col items-center justify-center gap-2 md:flex-row"
         >
           {data.actions &&
-            data.actions.map((action) => (
-              <div
-                key={action!.label}
-                data-tina-field={tinaField(action)}
-                className="bg-foreground/10 rounded-[calc(var(--radius-xl)+0.125rem)] border p-0.5"
-              >
-                <Button
-                  asChild
-                  size="lg"
-                  variant={action!.type === "link" ? "ghost" : "default"}
-                  className="rounded-xl px-5 text-base"
+            data.actions.map((action) => {
+              const iconData = normalizeIconData(action?.icon);
+
+              return (
+                <div
+                  key={action!.label}
+                  data-tina-field={tinaField(action)}
+                  className="bg-foreground/10 rounded-[calc(var(--radius-xl)+0.125rem)] border p-0.5"
                 >
-                  <Link href={action!.link!}>
-                    {action?.icon && <Icon data={action?.icon} />}
-                    <span className="text-nowrap">{action!.label}</span>
-                  </Link>
-                </Button>
-              </div>
-            ))}
+                  <Button
+                    asChild
+                    size="lg"
+                    variant={action!.type === "link" ? "ghost" : "default"}
+                    className="rounded-xl px-5 text-base"
+                  >
+                    <Link href={action!.link!}>
+                      {iconData && <Icon data={iconData} />}
+                      <span className="text-nowrap">{action!.label}</span>
+                    </Link>
+                  </Button>
+                </div>
+              );
+            })}
         </AnimatedGroup>
       </div>
 
