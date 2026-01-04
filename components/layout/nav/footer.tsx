@@ -2,7 +2,9 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Icon } from "../../icon";
 import { useLayout } from "../layout-context";
+import { normalizeIconData } from "@/lib/icon-utils";
 
 export const Footer = () => {
   const { header, footer } = useLayout();
@@ -31,19 +33,23 @@ export const Footer = () => {
           </div>
 
           <div className="order-first flex justify-center gap-6 text-sm md:order-last md:justify-end">
-            {footer.social?.map((link, index) => (
-              <Link
-                key={`${link!.icon}${index}`}
-                href={link!.url!}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Icon
-                  data={{ ...link!.icon, size: "small" }}
-                  className="text-muted-foreground hover:text-primary block"
-                />
-              </Link>
-            ))}
+            {footer.social?.map((link, index) => {
+              const iconData = normalizeIconData(link?.icon, "small");
+              if (!iconData || !link?.url) return null;
+              return (
+                <Link
+                  key={`${link.icon}${index}`}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Icon
+                    data={iconData}
+                    className="text-muted-foreground hover:text-primary block"
+                  />
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>
