@@ -115,13 +115,24 @@ const iconSizeClass = {
   custom: "",
 };
 
-//@ts-ignore
+interface IconProps {
+  data: {
+    name: string;
+    color?: string;
+    size?: string | number;
+    style?: string;
+  };
+  parentColor?: string;
+  className?: string;
+  tinaField?: string;
+}
+
 export const Icon = ({
   data,
   parentColor = "",
   className = "",
   tinaField = "",
-}) => {
+}: IconProps) => {
   const { theme } = useLayout();
 
   //@ts-ignore
@@ -134,11 +145,15 @@ export const Icon = ({
   //@ts-ignore
   const IconSVG = IconOptions[name];
 
-  //@ts-ignore
   const iconSizeClasses =
     typeof size === "string"
-      ? iconSizeClass[size]
-      : iconSizeClass[Object.keys(iconSizeClass)[size]];
+      ? iconSizeClass[size as keyof typeof iconSizeClass] ||
+        iconSizeClass.medium
+      : iconSizeClass[
+          Object.keys(iconSizeClass)[
+            size as number
+          ] as keyof typeof iconSizeClass
+        ] || iconSizeClass.medium;
 
   const iconColor = color
     ? color === "primary"
@@ -147,7 +162,10 @@ export const Icon = ({
     : theme!.color;
 
   // Fallback to a default color if the color doesn't exist in iconColorClass
-  const safeIconColor = iconColorClass[iconColor] ? iconColor : "blue";
+  const safeIconColor =
+    iconColor && iconColorClass[iconColor as keyof typeof iconColorClass]
+      ? iconColor
+      : "blue";
 
   if (style == "circle") {
     return (
