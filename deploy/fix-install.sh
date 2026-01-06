@@ -28,10 +28,17 @@ else
     echo -e "${GREEN}   ✓ Проект уже собран${NC}"
 fi
 
-# 2. Копируем конфигурацию PM2
+# 2. Копируем конфигурацию PM2 и webhook сервер
 if [ -f "deploy/ecosystem.config.js" ]; then
     cp deploy/ecosystem.config.js ecosystem.config.js
     echo -e "${GREEN}   ✓ Конфигурация PM2 скопирована${NC}"
+fi
+
+# Копируем webhook сервер в корень (для PM2)
+if [ -f "deploy/webhook-server.js" ]; then
+    cp deploy/webhook-server.js webhook-server.js
+    chmod +x webhook-server.js
+    echo -e "${GREEN}   ✓ Webhook сервер скопирован${NC}"
 fi
 
 # 3. Создаем директорию для логов
