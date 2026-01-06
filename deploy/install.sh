@@ -132,24 +132,20 @@ fi
 echo -e "${YELLOW}🔨 Шаг 5/7: Сборка проекта...${NC}"
 source "$PROJECT_DIR/.env.production" 2>/dev/null || true
 
-# Пробуем собрать с TinaCMS, но если зависнет - используем только Next.js build
-echo -e "${YELLOW}   Пробуем собрать с TinaCMS (может занять несколько минут)...${NC}"
-timeout 300 pnpm run build-local 2>&1 || {
-    echo -e "${YELLOW}   TinaCMS build завис или не удался, собираем только Next.js...${NC}"
-    # Если tina файлы уже есть, просто собираем Next.js
-    if [ -d "$PROJECT_DIR/tina/__generated__" ]; then
-        echo -e "${YELLOW}   Tina файлы уже существуют, собираем только Next.js...${NC}"
-        cd "$PROJECT_DIR"
-        pnpm next build
-    else
-        echo -e "${YELLOW}   Пробуем собрать через обычный build...${NC}"
-        timeout 180 pnpm run build 2>&1 || {
-            echo -e "${RED}   ⚠️  Ошибка сборки. Пробуем только Next.js build...${NC}"
-            cd "$PROJECT_DIR"
-            pnpm next build
-        }
-    fi
-}
+# Генерируем TinaCMS файлы (если нужно для админки)
+if [ ! -d "$PROJECT_DIR/tina/__generated__" ]; then
+    echo -e "${YELLOW}   Генерируем TinaCMS файлы для админки...${NC}"
+    export NODE_OPTIONS="--max-old-space-size=512"
+    timeout 180 pnpm tinacms build --local --skip-indexing --skip-cloud-checks 2>&1 || {
+        echo -e "${YELLOW}   ⚠️  TinaCMS генерация пропущена, продолжаем...${NC}"
+    }
+fi
+
+# Собираем Next.js (страницы теперь динамические, не требуют TinaCMS при сборке)
+echo -e "${YELLOW}   Собираем Next.js...${NC}"
+export NODE_OPTIONS="--max-old-space-size=1024"
+cd "$PROJECT_DIR"
+pnpm next build
 
 # 6. Настройка PM2
 echo -e "${YELLOW}⚙️  Шаг 6/7: Настройка PM2...${NC}"

@@ -59,9 +59,9 @@ if [ ! -d ".next" ] || [ ! -d ".next/server" ]; then
     # Увеличиваем лимит памяти
     export NODE_OPTIONS="--max-old-space-size=1024"
     
-    # Собираем только Next.js (админка уже есть в public/admin)
-    echo -e "${YELLOW}   Собираем Next.js (админка уже готова)...${NC}"
-    pnpm run build-next-only || pnpm next build
+    # Собираем Next.js (страницы теперь динамические, не требуют TinaCMS при сборке)
+    echo -e "${YELLOW}   Собираем Next.js...${NC}"
+    pnpm next build
     
     # Проверяем, что сборка успешна
     if [ -d ".next/server/app" ] || [ -d ".next/server/pages" ]; then
