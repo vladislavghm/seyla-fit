@@ -1,6 +1,7 @@
 import type { Collection } from 'tinacms';
 import {
   heroBlockSchema,
+  marqueeBlockSchema,
   contentBlockSchema,
   testimonialBlockSchema,
   featureBlockSchema,
@@ -42,6 +43,7 @@ const Page: Collection = {
       },
       templates: [
         heroBlockSchema,
+        marqueeBlockSchema,
         calloutBlockSchema,
         featureBlockSchema,
         statsBlockSchema,

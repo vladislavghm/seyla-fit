@@ -1,5 +1,6 @@
 // Экспорт всех схем блоков
 export { heroBlockSchema } from './hero';
+export { marqueeBlockSchema } from './marquee';
 export { contentBlockSchema } from './content';
 export { testimonialBlockSchema } from './testimonial';
 export { featureBlockSchema } from './features';
