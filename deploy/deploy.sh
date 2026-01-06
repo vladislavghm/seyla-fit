@@ -47,20 +47,21 @@ pnpm next build
 
 # Перезапускаем приложение с переменными окружения
 echo -e "${YELLOW}🔄 Перезапускаем приложение...${NC}"
+
+# Останавливаем приложение перед перезапуском
+pm2 delete seyla-fit 2>/dev/null || true
+pm2 delete webhook-server 2>/dev/null || true
+
+# Загружаем переменные окружения
 if [ -f .env.production ]; then
     set -a
     source .env.production
     set +a
-    pm2 delete seyla-fit 2>/dev/null || true
-    NEXT_PUBLIC_TINA_CLIENT_ID="$NEXT_PUBLIC_TINA_CLIENT_ID" \
-    TINA_TOKEN="$TINA_TOKEN" \
-    NEXT_PUBLIC_TINA_BRANCH="${NEXT_PUBLIC_TINA_BRANCH:-main}" \
-    NODE_ENV=production \
-    PORT=3000 \
-    pm2 start ecosystem.config.js
-else
-    pm2 restart seyla-fit || pm2 start ecosystem.config.js
 fi
+
+# Запускаем через ecosystem.config.js (он сам загрузит переменные)
+pm2 start ecosystem.config.js --update-env
+pm2 save
 
 echo -e "${GREEN}✅ Деплой завершен!${NC}"
 echo ""
