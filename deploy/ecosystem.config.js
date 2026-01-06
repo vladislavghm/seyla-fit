@@ -1,8 +1,29 @@
 // Конфигурация PM2 для Seyla Fit
-// Переменные окружения загружаются из .env.production через скрипт установки
-// или можно использовать: pm2 start ecosystem.config.js --env production
+// Переменные окружения загружаются из .env.production
 
 const path = require('path');
+const fs = require('fs');
+
+// Загружаем переменные из .env.production
+let envVars = {
+  NODE_ENV: 'production',
+  PORT: 3000,
+};
+
+const envFile = path.join(process.cwd(), '.env.production');
+if (fs.existsSync(envFile)) {
+  const envContent = fs.readFileSync(envFile, 'utf8');
+  envContent.split('\n').forEach(line => {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith('#') && trimmed.includes('=')) {
+      const [key, ...valueParts] = trimmed.split('=');
+      const value = valueParts.join('=').trim().replace(/^["']|["']$/g, '');
+      if (key && value) {
+        envVars[key.trim()] = value;
+      }
+    }
+  });
+}
 
 module.exports = {
   apps: [
@@ -13,11 +34,7 @@ module.exports = {
       cwd: process.cwd(),
       instances: 1,
       exec_mode: 'fork',
-      // Переменные будут установлены из .env.production перед запуском
-      env: {
-        NODE_ENV: 'production',
-        PORT: 3000,
-      },
+      env: envVars,
       // Если нужны конкретные значения, раскомментируйте:
       // env: {
       //   NODE_ENV: 'production',
