@@ -33,7 +33,15 @@ fi
 
 # Собираем проект
 echo -e "${YELLOW}🔨 Собираем проект...${NC}"
-pnpm run build-local || pnpm run build
+export NODE_OPTIONS="--max-old-space-size=1024"
+
+# Пробуем собрать через build-local, если не получается - только Next.js
+if pnpm run build-local 2>&1; then
+    echo -e "${GREEN}   ✓ Сборка с TinaCMS успешна${NC}"
+else
+    echo -e "${YELLOW}   ⚠️  Сборка с TinaCMS не удалась, собираем только Next.js...${NC}"
+    pnpm run build-next-only || pnpm next build
+fi
 
 # Перезапускаем приложение с переменными окружения
 echo -e "${YELLOW}🔄 Перезапускаем приложение...${NC}"
