@@ -47,22 +47,21 @@ mkdir -p logs
 # 4. Запускаем приложение через PM2
 echo -e "${YELLOW}🚀 Запускаем приложение...${NC}"
 
-# Загружаем переменные окружения
+# Загружаем переменные окружения и запускаем PM2
 if [ -f ".env.production" ]; then
-    set -a
-    source .env.production
-    set +a
+    echo -e "${YELLOW}   Загружаем переменные из .env.production...${NC}"
     
     pm2 delete seyla-fit 2>/dev/null || true
     pm2 delete webhook-server 2>/dev/null || true
     
-    NEXT_PUBLIC_TINA_CLIENT_ID="$NEXT_PUBLIC_TINA_CLIENT_ID" \
-    TINA_TOKEN="$TINA_TOKEN" \
-    NEXT_PUBLIC_TINA_BRANCH="${NEXT_PUBLIC_TINA_BRANCH:-main}" \
-    WEBHOOK_SECRET="${WEBHOOK_SECRET:-}" \
-    NODE_ENV=production \
-    PORT=3000 \
-    pm2 start ecosystem.config.js
+    # Загружаем переменные и экспортируем их
+    set -a
+    source .env.production
+    set +a
+    
+    # Обновляем ecosystem.config.js с актуальными переменными через PM2 env
+    # Или просто запускаем - ecosystem.config.js сам загрузит из .env.production
+    pm2 start ecosystem.config.js --update-env
     
     echo -e "${GREEN}   ✓ Приложение запущено${NC}"
 else
