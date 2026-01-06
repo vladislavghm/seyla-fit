@@ -55,21 +55,21 @@ export const CallToAction = ({ data }: { data: PageBlocksCta }) => {
 
 export const ctaBlockSchema: Template = {
   name: "cta",
-  label: "CTA",
+  label: "Призыв к действию",
   ui: {
     previewSrc: "/blocks/cta.png",
     defaultItem: {
-      title: "Start Building",
+      title: "Начните прямо сейчас",
       description:
-        "Get started with TinaCMS today and take your content management to the next level.",
+        "Присоединяйтесь к нам сегодня и выведите управление контентом на новый уровень.",
       actions: [
         {
-          label: "Get Started",
+          label: "Начать",
           type: "button",
           link: "/",
         },
         {
-          label: "Book Demo",
+          label: "Записаться на демо",
           type: "link",
           link: "/",
         },
@@ -79,25 +79,25 @@ export const ctaBlockSchema: Template = {
   fields: [
     {
       type: "string",
-      label: "Title",
+      label: "Заголовок",
       name: "title",
     },
     {
       type: "string",
-      label: "Description",
+      label: "Описание",
       name: "description",
       ui: {
         component: "textarea",
       },
     },
     {
-      label: "Actions",
+      label: "Действия",
       name: "actions",
       type: "object",
       list: true,
       ui: {
         defaultItem: {
-          label: "Action Label",
+          label: "Текст кнопки",
           type: "button",
           icon: {
             name: "Tina",
@@ -110,22 +110,22 @@ export const ctaBlockSchema: Template = {
       },
       fields: [
         {
-          label: "Label",
+          label: "Текст",
           name: "label",
           type: "string",
         },
         {
-          label: "Type",
+          label: "Тип",
           name: "type",
           type: "string",
           options: [
-            { label: "Button", value: "button" },
-            { label: "Link", value: "link" },
+            { label: "Кнопка", value: "button" },
+            { label: "Ссылка", value: "link" },
           ],
         },
         iconSchema as any,
         {
-          label: "Link",
+          label: "Ссылка",
           name: "link",
           type: "string",
         },

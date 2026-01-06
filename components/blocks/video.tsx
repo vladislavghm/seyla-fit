@@ -20,7 +20,7 @@ export const Video = ({ data }: { data: PageBlocksVideo }) => {
 
 export const videoBlockSchema: Template = {
   name: 'video',
-  label: 'Video',
+  label: 'Видео',
   ui: {
     previewSrc: '/blocks/video.png',
     defaultItem: {
@@ -31,27 +31,27 @@ export const videoBlockSchema: Template = {
     sectionBlockSchemaField as any,
     {
       type: 'string',
-      label: 'Color',
+      label: 'Цвет',
       name: 'color',
       options: [
-        { label: 'Default', value: 'default' },
-        { label: 'Tint', value: 'tint' },
-        { label: 'Primary', value: 'primary' },
+        { label: 'По умолчанию', value: 'default' },
+        { label: 'Оттенок', value: 'tint' },
+        { label: 'Основной', value: 'primary' },
       ],
     },
     {
       type: 'string',
-      label: 'Url',
+      label: 'Ссылка',
       name: 'url',
     },
     {
       type: 'boolean',
-      label: 'Auto Play',
+      label: 'Автовоспроизведение',
       name: 'autoPlay',
     },
     {
       type: 'boolean',
-      label: 'Loop',
+      label: 'Зацикливание',
       name: 'loop',
     },
   ],

@@ -2,23 +2,36 @@ import type { Collection } from "tinacms";
 import { ColorPickerInput } from "../fields/color";
 
 const Global: Collection = {
-  label: "Тема",
+  label: "Глобальные настройки",
   name: "global",
   path: "content/global",
   format: "json",
+  match: {
+    include: "index",
+  },
   ui: {
     global: true,
+    allowedActions: {
+      create: false,
+      delete: false,
+    },
   },
   fields: [
     {
+      type: "string",
+      label: "Название сайта",
+      name: "title",
+      description: "Отображается во вкладке браузера",
+    },
+    {
       type: "object",
-      label: "Theme",
+      label: "Тема",
       name: "theme",
       // @ts-ignore
       fields: [
         {
           type: "string",
-          label: "Primary Color",
+          label: "Основной цвет",
           name: "color",
           ui: {
             // @ts-ignore
@@ -28,7 +41,7 @@ const Global: Collection = {
         {
           type: "string",
           name: "font",
-          label: "Font Family",
+          label: "Семейство шрифтов",
           options: [
             {
               label: "System Sans",
@@ -47,18 +60,18 @@ const Global: Collection = {
         {
           type: "string",
           name: "darkMode",
-          label: "Dark Mode",
+          label: "Темный режим",
           options: [
             {
-              label: "System",
+              label: "Системный",
               value: "system",
             },
             {
-              label: "Light",
+              label: "Светлый",
               value: "light",
             },
             {
-              label: "Dark",
+              label: "Темный",
               value: "dark",
             },
           ],

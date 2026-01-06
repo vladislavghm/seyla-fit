@@ -27,24 +27,24 @@ export const Stats = ({ data }: { data: PageBlocksStats }) => {
 
 export const statsBlockSchema: Template = {
     name: "stats",
-    label: "Stats",
+    label: "Статистика",
     ui: {
         previewSrc: "/blocks/stats.png",
         defaultItem: {
-            title: "TinaCMS by the numbers",
-            description: "TinaCMS is an open-source content management system that allows developers to create and manage content for their websites and applications. It provides a flexible and customizable framework for building content-driven applications.",
+            title: "Статистика в цифрах",
+            description: "Система управления контентом с открытым исходным кодом, которая позволяет разработчикам создавать и управлять контентом для своих веб-сайтов и приложений.",
             stats: [
                 {
                     stat: "12K",
-                    type: "Stars on GitHub",
+                    type: "Звезд на GitHub",
                 },
                 {
                     stat: "11K",
-                    type: "Active Users",
+                    type: "Активных пользователей",
                 },
                 {
                     stat: "22K",
-                    type: "Powered Apps",
+                    type: "Приложений",
                 },
             ],
         },
@@ -53,23 +53,23 @@ export const statsBlockSchema: Template = {
         sectionBlockSchemaField as any,
         {
             type: "string",
-            label: "Title",
+            label: "Заголовок",
             name: "title",
         },
         {
             type: "string",
-            label: "Description",
+            label: "Описание",
             name: "description",
         },
         {
             type: "object",
-            label: "Stats",
+            label: "Статистика",
             name: "stats",
             list: true,
             ui: {
                 defaultItem: {
                     stat: "12K",
-                    type: "Stars on GitHub",
+                    type: "Звезд на GitHub",
                 },
                 itemProps: (item) => {
                     return {
@@ -80,12 +80,12 @@ export const statsBlockSchema: Template = {
             fields: [
                 {
                     type: "string",
-                    label: "Stat",
+                    label: "Значение",
                     name: "stat",
                 },
                 {
                     type: "string",
-                    label: "Type",
+                    label: "Тип",
                     name: "type",
                 },
             ],

@@ -4,6 +4,7 @@ import { Montserrat } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { VideoDialogProvider } from "@/components/ui/VideoDialogContext";
 import VideoDialog from "@/components/ui/VideoDialog";
+import client from "@/tina/__generated__/client";
 
 import "@/styles.css";
 import { TailwindIndicator } from "@/components/ui/breakpoint-indicator";
@@ -13,10 +14,24 @@ const montserrat = Montserrat({
   variable: "--font-sans",
 });
 
-export const metadata: Metadata = {
-  title: "Tina",
-  description: "Tina Cloud Starter",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  try {
+    const globalData = await client.queries.global({
+      relativePath: "index.json",
+    });
+    const siteTitle = globalData.data.global.title || "Seyla Fit";
+
+    return {
+      title: siteTitle,
+      description: "Seyla Fit - Студия растяжки и фитнеса",
+    };
+  } catch (error) {
+    return {
+      title: "Seyla Fit",
+      description: "Seyla Fit - Студия растяжки и фитнеса",
+    };
+  }
+}
 
 export default function RootLayout({
   children,

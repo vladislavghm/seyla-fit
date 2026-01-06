@@ -11,7 +11,7 @@ import {
 } from '@/components/blocks/schemas';
 
 const Page: Collection = {
-  label: 'Pages',
+  label: 'Страницы',
   name: 'page',
   path: 'content/pages',
   format: 'mdx',
@@ -26,10 +26,17 @@ const Page: Collection = {
   },
   fields: [
     {
+      type: 'string',
+      label: 'Название',
+      name: 'title',
+      isTitle: true,
+      required: true,
+    },
+    {
       type: 'object',
       list: true,
       name: 'blocks',
-      label: 'Sections',
+      label: 'Блоки',
       ui: {
         visualSelector: true,
       },

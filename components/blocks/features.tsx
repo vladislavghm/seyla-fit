@@ -96,12 +96,12 @@ const defaultFeature = {
 
 export const featureBlockSchema: Template = {
   name: "features",
-  label: "Features",
+  label: "Особенности",
   ui: {
     previewSrc: "/blocks/features.png",
     defaultItem: {
-      title: "Built to cover your needs",
-      description: "We have a lot of features to cover your needs",
+      title: "Создано для ваших потребностей",
+      description: "У нас много функций для покрытия ваших потребностей",
       items: [defaultFeature, defaultFeature, defaultFeature],
     },
   },
@@ -109,17 +109,17 @@ export const featureBlockSchema: Template = {
     sectionBlockSchemaField as any,
     {
       type: "string",
-      label: "Title",
+      label: "Заголовок",
       name: "title",
     },
     {
       type: "string",
-      label: "Description",
+      label: "Описание",
       name: "description",
     },
     {
       type: "object",
-      label: "Feature Items",
+      label: "Элементы особенностей",
       name: "items",
       list: true,
       ui: {
@@ -136,12 +136,12 @@ export const featureBlockSchema: Template = {
         iconSchema as any,
         {
           type: "string",
-          label: "Title",
+          label: "Заголовок",
           name: "title",
         },
         {
           type: "rich-text",
-          label: "Text",
+          label: "Текст",
           name: "text",
         },
       ],

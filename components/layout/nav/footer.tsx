@@ -12,7 +12,7 @@ export const Footer = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const backgroundColor = (footer as any)?.backgroundColor || "#1f2937"; // gray-900 по умолчанию
+  const backgroundColor = (footer as any)?.backgroundColor || "#1f2937";
 
   return (
     <footer className="text-white py-8" style={{ backgroundColor }}>

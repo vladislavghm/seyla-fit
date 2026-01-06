@@ -49,14 +49,14 @@ const TestimonialCard = ({ testimonial }: { testimonial: PageBlocksTestimonialTe
 
 export const testimonialBlockSchema: Template = {
   name: "testimonial",
-  label: "Testimonial",
+  label: "Отзыв",
   ui: {
     previewSrc: "/blocks/testimonial.png",
     defaultItem: {
       testimonials: [
         {
           quote:
-            "There are only two hard things in Computer Science: cache invalidation and naming things.",
+            "В информатике есть только две сложные вещи: инвалидация кеша и именование вещей.",
           author: "Phil Karlton",
         },
       ],
@@ -66,12 +66,12 @@ export const testimonialBlockSchema: Template = {
     sectionBlockSchemaField as any,
     {
       type: "string",
-      label: "Title",
+      label: "Заголовок",
       name: "title",
     },
     {
       type: "string",
-      label: "Description",
+      label: "Описание",
       name: "description",
       ui: {
         component: "textarea",
@@ -80,11 +80,11 @@ export const testimonialBlockSchema: Template = {
     {
       type: "object",
       list: true,
-      label: "Testimonials",
+      label: "Отзывы",
       name: "testimonials",
       ui: {
         defaultItem: {
-          quote: "There are only two hard things in Computer Science: cache invalidation and naming things.",
+          quote: "В информатике есть только две сложные вещи: инвалидация кеша и именование вещей.",
           author: "Phil Karlton",
         },
         itemProps: (item) => {
@@ -99,22 +99,22 @@ export const testimonialBlockSchema: Template = {
           ui: {
             component: "textarea",
           },
-          label: "Quote",
+          label: "Цитата",
           name: "quote",
         },
         {
           type: "string",
-          label: "Author",
+          label: "Автор",
           name: "author",
         },
         {
           type: "string",
-          label: "Role",
+          label: "Роль",
           name: "role",
         },
         {
           type: "image",
-          label: "Avatar",
+          label: "Аватар",
           name: "avatar",
         }
       ],

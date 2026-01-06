@@ -60,24 +60,24 @@ export const Callout = ({ data }: { data: PageBlocksCallout }) => {
 
 export const calloutBlockSchema: Template = {
     name: 'callout',
-    label: 'Callout',
+    label: 'Выделение',
     ui: {
         previewSrc: '/blocks/callout.png',
         defaultItem: {
             url: 'https://tina.io/editorial-workflow',
-            text: 'Support for live editing and editorial workflow',
+            text: 'Поддержка живого редактирования и редакционного рабочего процесса',
         },
     },
     fields: [
         sectionBlockSchemaField as any,
         {
             type: 'string',
-            label: 'Text',
+            label: 'Текст',
             name: 'text',
         },
         {
             type: 'string',
-            label: 'Url',
+            label: 'Ссылка',
             name: 'url',
         },
     ],
