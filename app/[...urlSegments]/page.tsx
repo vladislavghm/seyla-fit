@@ -5,7 +5,9 @@ import Layout from '@/components/layout/layout';
 import { Section } from '@/components/layout/section';
 import ClientPage from './client-page';
 
-export const revalidate = 300;
+// Отключаем статическую генерацию - страница будет генерироваться динамически
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function Page({
   params,
@@ -34,31 +36,38 @@ export default async function Page({
 }
 
 export async function generateStaticParams() {
-  let pages = await client.queries.pageConnection();
-  const allPages = pages;
+  try {
+    let pages = await client.queries.pageConnection();
+    const allPages = pages;
 
-  if (!allPages.data.pageConnection.edges) {
-    return [];
-  }
-
-  while (pages.data.pageConnection.pageInfo.hasNextPage) {
-    pages = await client.queries.pageConnection({
-      after: pages.data.pageConnection.pageInfo.endCursor,
-    });
-
-    if (!pages.data.pageConnection.edges) {
-      break;
+    if (!allPages.data.pageConnection.edges) {
+      return [];
     }
 
-    allPages.data.pageConnection.edges.push(...pages.data.pageConnection.edges);
+    while (pages.data.pageConnection.pageInfo.hasNextPage) {
+      pages = await client.queries.pageConnection({
+        after: pages.data.pageConnection.pageInfo.endCursor,
+      });
+
+      if (!pages.data.pageConnection.edges) {
+        break;
+      }
+
+      allPages.data.pageConnection.edges.push(...pages.data.pageConnection.edges);
+    }
+
+    const params = allPages.data?.pageConnection.edges
+      .map((edge) => ({
+        urlSegments: edge?.node?._sys.breadcrumbs || [],
+      }))
+      .filter((x) => x.urlSegments.length >= 1)
+      .filter((x) => !x.urlSegments.every((x) => x === 'home')); // exclude the home page
+
+    return params;
+  } catch (error) {
+    // Если TinaCMS недоступен при сборке, возвращаем пустой массив
+    // Страницы будут генерироваться динамически
+    console.warn('TinaCMS недоступен при generateStaticParams, используем динамическую генерацию:', error);
+    return [];
   }
-
-  const params = allPages.data?.pageConnection.edges
-    .map((edge) => ({
-      urlSegments: edge?.node?._sys.breadcrumbs || [],
-    }))
-    .filter((x) => x.urlSegments.length >= 1)
-    .filter((x) => !x.urlSegments.every((x) => x === 'home')); // exclude the home page
-
-  return params;
 }
