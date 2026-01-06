@@ -16,6 +16,24 @@ echo -e "${YELLOW}🔧 Завершение установки...${NC}"
 
 cd "$PROJECT_DIR" || exit 1
 
+# Проверяем свободное место на диске
+echo -e "${YELLOW}💾 Проверяем свободное место на диске...${NC}"
+AVAILABLE_SPACE=$(df -BG "$PROJECT_DIR" | tail -1 | awk '{print $4}' | sed 's/G//')
+if [ "$AVAILABLE_SPACE" -lt 2 ]; then
+    echo -e "${RED}   ⚠️  Мало места на диске (${AVAILABLE_SPACE}GB свободно)${NC}"
+    echo -e "${YELLOW}   Запускаем очистку...${NC}"
+    if [ -f "$PROJECT_DIR/deploy/cleanup-disk.sh" ]; then
+        bash "$PROJECT_DIR/deploy/cleanup-disk.sh"
+    else
+        echo -e "${YELLOW}   Очищаем кеши вручную...${NC}"
+        pnpm store prune 2>/dev/null || true
+        rm -rf "$PROJECT_DIR/.next/cache" 2>/dev/null || true
+        sudo rm -rf /tmp/* 2>/dev/null || true
+    fi
+else
+    echo -e "${GREEN}   ✓ Свободного места достаточно (${AVAILABLE_SPACE}GB)${NC}"
+fi
+
 # 1. Проверяем и генерируем админку TinaCMS
 echo -e "${YELLOW}📦 Проверяем админку TinaCMS...${NC}"
 if [ ! -d "public/admin" ] || [ ! -f "public/admin/index.html" ]; then
