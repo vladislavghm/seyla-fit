@@ -1,5 +1,5 @@
 import type { Collection } from "tinacms";
-import { iconSchema } from "../fields/icon";
+import { ColorPickerInput } from "../fields/colorPicker";
 
 const Footer: Collection = {
   label: "Подвал",
@@ -15,23 +15,26 @@ const Footer: Collection = {
   },
   fields: [
     {
-      type: "object",
-      label: "Social Links",
-      name: "social",
-      list: true,
+      type: "string",
+      label: "Цвет фона",
+      name: "backgroundColor",
+      description: "Цвет фона подвала",
       ui: {
-        itemProps: (item) => {
-          return { label: item?.icon?.name || "undefined" };
-        },
+        // @ts-ignore
+        component: ColorPickerInput,
       },
-      fields: [
-        iconSchema as any,
-        {
-          type: "string",
-          label: "Url",
-          name: "url",
-        },
-      ],
+    },
+    {
+      type: "string",
+      label: "Копирайт (первая строка)",
+      name: "copyrightLine1",
+      description: "Например: '© 2023 Студия растяжки'",
+    },
+    {
+      type: "string",
+      label: "Копирайт (вторая строка)",
+      name: "copyrightLine2",
+      description: "Например: 'и фитнеса \"Шпагат Просто\"'",
     },
   ],
 };

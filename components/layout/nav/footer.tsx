@@ -1,56 +1,58 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { Icon } from "../../icon";
 import { useLayout } from "../layout-context";
-import { normalizeIconData } from "@/lib/icon-utils";
 
 export const Footer = () => {
   const { header, footer } = useLayout();
 
   if (!header || !footer) return null;
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const backgroundColor = (footer as any)?.backgroundColor || "#1f2937"; // gray-900 по умолчанию
+
   return (
-    <footer className="border-b bg-white pt-20 dark:bg-transparent">
-      <div className="mx-auto max-w-5xl px-6">
-        <div className="mt-12 flex flex-wrap items-center gap-6 border-t py-6 flex-col md:flex-row md:justify-between">
-          <div className="order-last flex items-center justify-center gap-2 md:order-first md:justify-start">
-            {header.logo && (
-              <Link href="/" aria-label="go home">
-                <Image
-                  src={header.logo}
-                  alt="Logo"
-                  width={100}
-                  height={30}
-                  className="h-auto w-auto object-contain"
-                />
-              </Link>
+    <footer className="text-white py-8" style={{ backgroundColor }}>
+      <div className="mx-auto w-full max-w-full px-4 sm:px-6 lg:px-8 transition-all duration-300">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          {/* Левая часть: Копирайт */}
+          <div className="flex flex-col text-sm text-white text-center md:text-left">
+            {(footer as any).copyrightLine1 && (
+              <span className="text-white">
+                {(footer as any).copyrightLine1}
+              </span>
             )}
-            <span className="self-center text-muted-foreground text-sm">
-              © {new Date().getFullYear()}, All rights reserved
-            </span>
+            {(footer as any).copyrightLine2 && (
+              <span className="text-white">
+                {(footer as any).copyrightLine2}
+              </span>
+            )}
           </div>
 
-          <div className="order-first flex justify-center gap-6 text-sm md:order-last md:justify-end">
-            {footer.social?.map((link, index) => {
-              const iconData = normalizeIconData(link?.icon, "small");
-              if (!iconData || !link?.url) return null;
-              return (
-                <Link
-                  key={`${link.icon}${index}`}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Icon
-                    data={iconData}
-                    className="text-muted-foreground hover:text-primary block"
-                  />
-                </Link>
-              );
-            })}
-          </div>
+          {/* Центр: Навигация */}
+          <nav className="flex items-center gap-6 text-sm">
+            {header.nav?.map((item, index) => (
+              <Link
+                key={index}
+                href={item!.href!}
+                className="text-white hover:opacity-70 transition-opacity"
+              >
+                {item!.label}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Правая часть: Наверх */}
+          <button
+            onClick={scrollToTop}
+            className="text-sm text-white hover:opacity-70 transition-opacity"
+            aria-label="Наверх"
+          >
+            Наверх ↑
+          </button>
         </div>
       </div>
     </footer>
