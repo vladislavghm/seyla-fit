@@ -240,6 +240,50 @@ pm2 status
 curl http://localhost:3000
 ```
 
+### GitHub Webhook возвращает 404
+
+Если GitHub webhook показывает ошибку 404, это означает, что конфигурация `/webhook` отсутствует в Nginx (возможно, её удалил certbot).
+
+**Автоматическое исправление:**
+
+```bash
+cd ~/seyla-fit
+bash deploy/fix-webhook.sh
+```
+
+**Или вручную:**
+
+1. Откройте конфигурацию Nginx:
+
+```bash
+sudo nano /etc/nginx/sites-available/seyla-fit
+```
+
+2. Найдите блок `server` с `listen 443` и добавьте перед последней `}`:
+
+```nginx
+    # GitHub Webhook для автоматического деплоя
+    location /webhook {
+        proxy_pass http://127.0.0.1:9000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-GitHub-Event $http_x_github_event;
+        proxy_set_header X-Hub-Signature-256 $http_x_hub_signature_256;
+        proxy_read_timeout 300;
+        proxy_connect_timeout 300;
+    }
+```
+
+3. Проверьте и перезагрузите:
+
+```bash
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
 ## 📞 Помощь
 
 - [Документация TinaCMS](https://tina.io/docs/)
