@@ -52,22 +52,30 @@ pkill -9 -f "node.*next" 2>/dev/null || true
 pkill -9 -f "tinacms" 2>/dev/null || true
 sleep 2
 
-# Генерируем TinaCMS файлы (если нужно)
-if [ ! -f "tina/__generated__/client.ts" ]; then
-    echo -e "${YELLOW}   Генерируем TinaCMS файлы...${NC}"
+# Генерируем TinaCMS файлы (клиент и админка)
+if [ ! -f "tina/__generated__/client.ts" ] || [ ! -d "public/admin" ]; then
+    echo -e "${YELLOW}   Генерируем TinaCMS файлы (клиент и админка)...${NC}"
     
     # Освобождаем порт 9000
     lsof -ti:9000 | xargs kill -9 2>/dev/null || true
     sleep 1
     
     if [ -n "$NEXT_PUBLIC_TINA_CLIENT_ID" ] && [ -n "$TINA_TOKEN" ]; then
-        # Используем Tina Cloud API
+        # Используем Tina Cloud API (генерирует и клиент, и админку)
         rm -rf tina/__generated__
+        rm -rf public/admin
         NODE_OPTIONS="--max-old-space-size=1024" \
         NEXT_PUBLIC_TINA_CLIENT_ID="$NEXT_PUBLIC_TINA_CLIENT_ID" \
         TINA_TOKEN="$TINA_TOKEN" \
         NEXT_PUBLIC_TINA_BRANCH="${NEXT_PUBLIC_TINA_BRANCH:-main}" \
         pnpm tinacms build 2>&1 || echo -e "${YELLOW}   ⚠️  TinaCMS генерация пропущена${NC}"
+        
+        # Проверяем что админка сгенерирована
+        if [ -d "public/admin" ]; then
+            echo -e "${GREEN}   ✓ Админка сгенерирована${NC}"
+        else
+            echo -e "${YELLOW}   ⚠️  Админка не сгенерирована${NC}"
+        fi
     fi
 fi
 
