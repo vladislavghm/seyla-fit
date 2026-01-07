@@ -44,21 +44,17 @@ if [ -f .env.production ]; then
     echo -e "${GREEN}   ✓ Переменные окружения загружены${NC}"
 fi
 
-# Останавливаем процессы перед сборкой
-echo -e "${YELLOW}⏸️  Останавливаем приложения...${NC}"
-pm2 stop all 2>/dev/null || true
-pm2 delete all 2>/dev/null || true
-pkill -9 -f "node.*next" 2>/dev/null || true
+# Останавливаем только seyla-fit перед сборкой (webhook-server оставляем работающим)
+echo -e "${YELLOW}⏸️  Останавливаем приложение seyla-fit...${NC}"
+pm2 stop seyla-fit 2>/dev/null || true
+pm2 delete seyla-fit 2>/dev/null || true
+pkill -9 -f "node.*next.*start" 2>/dev/null || true
 pkill -9 -f "tinacms" 2>/dev/null || true
 sleep 2
 
 # Генерируем TinaCMS файлы (клиент и админка)
 if [ ! -f "tina/__generated__/client.ts" ] || [ ! -d "public/admin" ]; then
     echo -e "${YELLOW}   Генерируем TinaCMS файлы (клиент и админка)...${NC}"
-    
-    # Освобождаем порт 9000
-    lsof -ti:9000 | xargs kill -9 2>/dev/null || true
-    sleep 1
     
     if [ -n "$NEXT_PUBLIC_TINA_CLIENT_ID" ] && [ -n "$TINA_TOKEN" ]; then
         # Используем Tina Cloud API (генерирует и клиент, и админку)
@@ -101,7 +97,8 @@ if [ -f .env.production ]; then
     set +a
 fi
 
-pm2 start ecosystem.config.js --update-env
+# Запускаем только seyla-fit (webhook-server оставляем работать)
+pm2 start ecosystem.config.js --only seyla-fit --update-env 2>/dev/null || pm2 restart seyla-fit --update-env
 pm2 save
 
 echo -e "${GREEN}✅ Деплой завершен!${NC}"
