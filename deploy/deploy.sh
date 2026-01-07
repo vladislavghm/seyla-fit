@@ -35,10 +35,18 @@ fi
 echo -e "${YELLOW}🔨 Собираем проект...${NC}"
 export NODE_OPTIONS="--max-old-space-size=1024"
 
-# Генерируем TinaCMS файлы (если нужно для админки)
-if [ ! -d "tina/__generated__" ]; then
-    echo -e "${YELLOW}   Генерируем TinaCMS файлы для админки...${NC}"
-    pnpm run tina:generate 2>&1 || echo -e "${YELLOW}   ⚠️  TinaCMS генерация пропущена${NC}"
+# Генерируем TinaCMS файлы с Tina Cloud API (если есть переменные)
+if [ ! -d "tina/__generated__" ] || [ -n "$NEXT_PUBLIC_TINA_CLIENT_ID" ]; then
+    echo -e "${YELLOW}   Генерируем TinaCMS файлы...${NC}"
+    if [ -n "$NEXT_PUBLIC_TINA_CLIENT_ID" ] && [ -n "$TINA_TOKEN" ]; then
+        # Используем Tina Cloud API (как на Vercel)
+        echo -e "${GREEN}   Используем Tina Cloud API...${NC}"
+        rm -rf tina/__generated__
+        pnpm tinacms build 2>&1 || echo -e "${YELLOW}   ⚠️  TinaCMS Cloud генерация не удалась${NC}"
+    else
+        # Локальная генерация (для админки)
+        pnpm run tina:generate 2>&1 || echo -e "${YELLOW}   ⚠️  TinaCMS генерация пропущена${NC}"
+    fi
 fi
 
 # Собираем Next.js (страницы теперь динамические, не требуют TinaCMS при сборке)
