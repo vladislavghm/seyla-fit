@@ -49,6 +49,15 @@ export NODE_OPTIONS="--max-old-space-size=1024"
 # Генерируем TinaCMS файлы с Tina Cloud API (если есть переменные)
 if [ ! -d "tina/__generated__" ] || [ -n "$NEXT_PUBLIC_TINA_CLIENT_ID" ]; then
     echo -e "${YELLOW}   Генерируем TinaCMS файлы...${NC}"
+    
+    # Останавливаем webhook-server временно (он использует порт 9000, нужный TinaCMS)
+    echo -e "${YELLOW}   Останавливаем webhook-server (освобождаем порт 9000)...${NC}"
+    pm2 stop webhook-server 2>/dev/null || true
+    
+    # Убиваем процессы на порту 9000, если есть
+    lsof -ti:9000 | xargs kill -9 2>/dev/null || true
+    sleep 2
+    
     if [ -n "$NEXT_PUBLIC_TINA_CLIENT_ID" ] && [ -n "$TINA_TOKEN" ]; then
         # Используем Tina Cloud API (как на Vercel)
         echo -e "${GREEN}   Используем Tina Cloud API...${NC}"
@@ -65,6 +74,13 @@ if [ ! -d "tina/__generated__" ] || [ -n "$NEXT_PUBLIC_TINA_CLIENT_ID" ]; then
         # Локальная генерация (для админки)
         echo -e "${YELLOW}   Переменные Tina Cloud не найдены, используем локальную генерацию...${NC}"
         pnpm run tina:generate 2>&1 || echo -e "${YELLOW}   ⚠️  TinaCMS генерация пропущена${NC}"
+    fi
+    
+    # Проверяем, что клиент сгенерирован правильно
+    if [ ! -f "tina/__generated__/client.ts" ]; then
+        echo -e "${RED}   ❌ Ошибка: TinaCMS клиент не сгенерирован!${NC}"
+        echo -e "${YELLOW}   Пропускаем сборку Next.js - используйте готовую сборку с локального компьютера${NC}"
+        exit 1
     fi
 fi
 
@@ -89,6 +105,8 @@ echo -e "${YELLOW}🔄 Перезапускаем приложение...${NC}"
 # Останавливаем приложение перед перезапуском
 pm2 delete seyla-fit 2>/dev/null || true
 pm2 delete webhook-server 2>/dev/null || true
+# Запускаем webhook-server снова (он был остановлен для TinaCMS генерации)
+pm2 start ecosystem.config.js --update-env --only webhook-server 2>/dev/null || true
 
 # Загружаем переменные окружения
 if [ -f .env.production ]; then
