@@ -103,7 +103,7 @@ bash deploy/deploy.sh
 cd ~/seyla-fit
 git pull
 pnpm install
-pnpm run build-local
+pnpm build
 pm2 restart seyla-fit
 ```
 

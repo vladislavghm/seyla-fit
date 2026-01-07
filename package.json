@@ -4,17 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "tinacms dev -c \"next dev --turbopack\"",
-    "build": "tinacms build && next build",
-    "build-local": "tinacms build --local --skip-indexing --skip-cloud-checks && next build",
-    "build-next-only": "next build",
-    "tina:generate": "tinacms build --local --skip-indexing --skip-cloud-checks",
-    "tina:generate:cloud": "tinacms build",
-    "tina:clean": "node -e \"const fs=require('fs');const path=require('path');const dir=path.join(process.cwd(),'tina/__generated__');fs.existsSync(dir)&&fs.rmSync(dir,{recursive:true,force:true})\"",
-    "build-safe": "pnpm tina:clean && (pnpm tina:generate:cloud || pnpm tina:generate || echo 'TinaCMS generation failed, continuing...') && pnpm next build",
-    "start": "tinacms build && next start",
-    "export": "npm run build && next export",
+    "build": "next build",
+    "start": "next start",
     "lint": "biome lint",
-    "dev:build": "next build"
+    "tina:build": "npx dotenv-cli -e .env.local -- pnpm tinacms build"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
@@ -25,6 +18,7 @@
     "@types/react": "^18.3.26",
     "@types/styled-components": "^5.1.34",
     "autoprefixer": "^10.4.21",
+    "dotenv-cli": "^11.0.0",
     "postcss": "^8.5.6",
     "postcss-import": "^16.1.1",
     "postcss-nesting": "^13.0.2",
