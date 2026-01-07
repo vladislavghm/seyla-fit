@@ -29,6 +29,9 @@ if [ -f .env.production ]; then
     set -a
     source .env.production
     set +a
+    echo -e "${GREEN}   ✓ Переменные окружения загружены${NC}"
+else
+    echo -e "${YELLOW}   ⚠️  Файл .env.production не найден${NC}"
 fi
 
 # Собираем проект
@@ -42,9 +45,17 @@ if [ ! -d "tina/__generated__" ] || [ -n "$NEXT_PUBLIC_TINA_CLIENT_ID" ]; then
         # Используем Tina Cloud API (как на Vercel)
         echo -e "${GREEN}   Используем Tina Cloud API...${NC}"
         rm -rf tina/__generated__
-        pnpm tinacms build 2>&1 || echo -e "${YELLOW}   ⚠️  TinaCMS Cloud генерация не удалась${NC}"
+        # Явно экспортируем переменные для процесса
+        NEXT_PUBLIC_TINA_CLIENT_ID="$NEXT_PUBLIC_TINA_CLIENT_ID" \
+        TINA_TOKEN="$TINA_TOKEN" \
+        NEXT_PUBLIC_TINA_BRANCH="${NEXT_PUBLIC_TINA_BRANCH:-main}" \
+        pnpm tinacms build 2>&1 || {
+            echo -e "${YELLOW}   ⚠️  TinaCMS Cloud генерация не удалась, пробуем локальную...${NC}"
+            pnpm run tina:generate 2>&1 || echo -e "${YELLOW}   ⚠️  TinaCMS генерация пропущена${NC}"
+        }
     else
         # Локальная генерация (для админки)
+        echo -e "${YELLOW}   Переменные Tina Cloud не найдены, используем локальную генерацию...${NC}"
         pnpm run tina:generate 2>&1 || echo -e "${YELLOW}   ⚠️  TinaCMS генерация пропущена${NC}"
     fi
 fi
