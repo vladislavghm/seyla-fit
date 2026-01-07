@@ -38,15 +38,32 @@ echo ""
 
 # 4. Проверяем Nginx конфигурацию
 echo "4️⃣ Проверка Nginx конфигурации для /webhook:"
-if [ -f /etc/nginx/sites-enabled/seyla-fit ]; then
-    if grep -q "location /webhook" /etc/nginx/sites-enabled/seyla-fit; then
-        echo "   ✅ Конфигурация /webhook найдена в Nginx"
-        grep -A 5 "location /webhook" /etc/nginx/sites-enabled/seyla-fit | head -6
+NGINX_AVAILABLE="/etc/nginx/sites-available/seyla-fit"
+NGINX_ENABLED="/etc/nginx/sites-enabled/seyla-fit"
+
+# Определяем реальный файл конфигурации
+if [ -L "$NGINX_ENABLED" ]; then
+    REAL_PATH=$(sudo readlink -f "$NGINX_ENABLED" 2>/dev/null || echo "")
+    CHECK_FILE="${REAL_PATH:-$NGINX_AVAILABLE}"
+else
+    CHECK_FILE="$NGINX_AVAILABLE"
+fi
+
+if [ -f "$CHECK_FILE" ]; then
+    if sudo grep -q "location /webhook" "$CHECK_FILE" 2>/dev/null; then
+        echo "   ✅ Конфигурация /webhook найдена в $CHECK_FILE"
+        sudo grep -A 5 "location /webhook" "$CHECK_FILE" | head -6
     else
-        echo "   ❌ Конфигурация /webhook НЕ найдена в Nginx!"
+        echo "   ❌ Конфигурация /webhook НЕ найдена в $CHECK_FILE"
+        if [ -f "$NGINX_ENABLED" ] && [ "$CHECK_FILE" != "$NGINX_ENABLED" ]; then
+            echo "   Проверяем также sites-enabled..."
+            if sudo grep -q "location /webhook" "$NGINX_ENABLED" 2>/dev/null; then
+                echo "   ⚠️  Конфигурация найдена в sites-enabled, но не в sites-available!"
+            fi
+        fi
     fi
 else
-    echo "   ⚠️  Конфигурация Nginx не найдена"
+    echo "   ⚠️  Конфигурация Nginx не найдена: $CHECK_FILE"
 fi
 echo ""
 
@@ -63,8 +80,26 @@ else
 fi
 echo ""
 
+echo "6️⃣ Дополнительная диагностика:"
+if [ -L "$NGINX_ENABLED" ]; then
+    REAL_PATH=$(sudo readlink -f "$NGINX_ENABLED" 2>/dev/null || echo "")
+    echo "   Симлинк sites-enabled → $REAL_PATH"
+    if [ "$REAL_PATH" != "$NGINX_AVAILABLE" ]; then
+        echo "   ⚠️  Внимание: sites-enabled указывает не на sites-available!"
+        echo "   Это может быть нормально, если certbot изменил структуру файлов"
+    fi
+else
+    echo "   sites-enabled не является симлинком"
+fi
+echo ""
+
 echo "✅ Проверка завершена"
 echo ""
+if [ "$HTTPS_STATUS" != "405" ] && [ "$HTTPS_STATUS" != "200" ]; then
+    echo "🔧 Если webhook не работает, попробуйте:"
+    echo "   bash deploy/fix-webhook.sh"
+    echo ""
+fi
 echo "📝 Для настройки webhook в GitHub:"
 echo "   1. GitHub → Settings → Webhooks → Add webhook"
 echo "   2. Payload URL: https://seyla-fit.ru/webhook"

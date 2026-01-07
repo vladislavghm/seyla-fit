@@ -1,7 +1,21 @@
 #!/bin/bash
 # Простой скрипт для добавления конфигурации /webhook в Nginx
 
-NGINX_CONF="/etc/nginx/sites-available/seyla-fit"
+NGINX_AVAILABLE="/etc/nginx/sites-available/seyla-fit"
+NGINX_ENABLED="/etc/nginx/sites-enabled/seyla-fit"
+
+# Определяем, какой файл использовать (если sites-enabled - симлинк, используем исходный файл)
+if [ -L "$NGINX_ENABLED" ]; then
+    # Если это симлинк, получаем реальный путь
+    REAL_PATH=$(sudo readlink -f "$NGINX_ENABLED")
+    NGINX_CONF="$REAL_PATH"
+elif [ -f "$NGINX_ENABLED" ] && [ ! -f "$NGINX_AVAILABLE" ]; then
+    # Если файл есть только в sites-enabled (редкий случай)
+    NGINX_CONF="$NGINX_ENABLED"
+else
+    # По умолчанию используем sites-available
+    NGINX_CONF="$NGINX_AVAILABLE"
+fi
 
 if [ ! -f "$NGINX_CONF" ]; then
     echo "❌ Файл конфигурации не найден: $NGINX_CONF"
@@ -9,7 +23,19 @@ if [ ! -f "$NGINX_CONF" ]; then
 fi
 
 if sudo grep -q "location /webhook" "$NGINX_CONF"; then
-    echo "✅ Конфигурация /webhook уже присутствует"
+    echo "✅ Конфигурация /webhook уже присутствует в $NGINX_CONF"
+    # Проверяем, что симлинк правильный
+    if [ -L "$NGINX_ENABLED" ]; then
+        REAL_PATH=$(sudo readlink -f "$NGINX_ENABLED")
+        if [ "$REAL_PATH" != "$NGINX_AVAILABLE" ]; then
+            echo "⚠️  Предупреждение: sites-enabled указывает на другой файл: $REAL_PATH"
+        fi
+    fi
+    # Все равно проверяем конфигурацию и перезагружаем
+    if sudo nginx -t > /dev/null 2>&1; then
+        sudo systemctl reload nginx
+        echo "✅ Nginx перезагружен"
+    fi
     exit 0
 fi
 
@@ -18,10 +44,10 @@ sudo cp "$NGINX_CONF" "$BACKUP"
 echo "📋 Резервная копия: $BACKUP"
 
 # Добавляем конфигурацию перед последней закрывающей скобкой блока server
-sudo python3 << 'EOF'
+sudo python3 << EOF
 import sys
 
-nginx_conf = "/etc/nginx/sites-available/seyla-fit"
+nginx_conf = "$NGINX_CONF"
 
 webhook_config = """    # GitHub Webhook для автоматического деплоя
     location /webhook {
