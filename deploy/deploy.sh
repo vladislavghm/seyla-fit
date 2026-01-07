@@ -20,17 +20,12 @@ cd "$PROJECT_DIR" || exit 1
 echo -e "${YELLOW}📥 Получаем изменения из Git...${NC}"
 git pull origin main || git pull origin master
 
-# Очищаем перед сборкой
-echo -e "${YELLOW}🧹 Очищаем кеши и старые сборки...${NC}"
-rm -rf .next
+# Очищаем кеши (но НЕ удаляем .next - приложение должно продолжать работать)
+echo -e "${YELLOW}🧹 Очищаем кеши...${NC}"
 rm -rf node_modules/.cache
 rm -rf tina/__generated__/.cache
 pnpm store prune 2>/dev/null || true
-
-# Очищаем системные кеши
-sync
-echo 3 | sudo tee /proc/sys/vm/drop_caches > /dev/null 2>&1 || true
-echo -e "${GREEN}   ✓ Очистка завершена${NC}"
+echo -e "${GREEN}   ✓ Очистка кешей завершена${NC}"
 
 # Устанавливаем зависимости
 echo -e "${YELLOW}📦 Устанавливаем зависимости...${NC}"
@@ -44,13 +39,9 @@ if [ -f .env.production ]; then
     echo -e "${GREEN}   ✓ Переменные окружения загружены${NC}"
 fi
 
-# Останавливаем только seyla-fit перед сборкой (webhook-server оставляем работающим)
-echo -e "${YELLOW}⏸️  Останавливаем приложение seyla-fit...${NC}"
-pm2 stop seyla-fit 2>/dev/null || true
-pm2 delete seyla-fit 2>/dev/null || true
-pkill -9 -f "node.*next.*start" 2>/dev/null || true
-pkill -9 -f "tinacms" 2>/dev/null || true
-sleep 2
+# НЕ останавливаем приложение - оно должно продолжать работать во время сборки
+# Старая версия будет работать, пока мы собираем новую
+echo -e "${YELLOW}📦 Собираем новую версию (старая продолжает работать)...${NC}"
 
 # Генерируем TinaCMS файлы (клиент и админка)
 if [ ! -f "tina/__generated__/client.ts" ] || [ ! -d "public/admin" ]; then
@@ -75,17 +66,24 @@ if [ ! -f "tina/__generated__/client.ts" ] || [ ! -d "public/admin" ]; then
     fi
 fi
 
-# Собираем Next.js
+# Собираем Next.js (старое приложение продолжает работать)
 echo -e "${YELLOW}🔨 Собираем Next.js...${NC}"
 export NODE_OPTIONS="--max-old-space-size=1536"
 export NEXT_PRIVATE_WORKERS=1
 export NODE_ENV=production
 export GENERATE_SOURCEMAP=false
 
-pnpm next build --no-lint || {
+# Удаляем .next только если приложение не запущено
+if ! pm2 list | grep -q "seyla-fit.*online"; then
+    echo -e "${YELLOW}   Приложение не запущено, очищаем .next...${NC}"
+    rm -rf .next
+fi
+
+if ! pnpm next build --no-lint; then
     echo -e "${RED}   ❌ Сборка не удалась${NC}"
+    # Если приложение было запущено, оно продолжит работать со старой версией
     exit 1
-}
+fi
 
 # Перезапускаем приложение
 echo -e "${YELLOW}🔄 Перезапускаем приложение...${NC}"
@@ -97,12 +95,16 @@ if [ -f .env.production ]; then
     set +a
 fi
 
-# Запускаем только seyla-fit (webhook-server оставляем работать)
-# Используем restart вместо start ecosystem.config.js, чтобы не перечитывать весь конфиг
-if pm2 list | grep -q "seyla-fit"; then
+# Перезагружаем приложение с нулевым простоем (graceful reload)
+# Новые соединения идут к новому процессу, старые завершают работу
+if pm2 list | grep -q "seyla-fit.*online"; then
+    echo -e "${YELLOW}   Выполняем graceful reload (zero-downtime)...${NC}"
+    pm2 reload seyla-fit --update-env
+elif pm2 list | grep -q "seyla-fit"; then
+    # Если процесс есть, но не запущен - перезапускаем
     pm2 restart seyla-fit --update-env
 else
-    # Если seyla-fit нет в списке, запускаем только его
+    # Если процесса нет - запускаем
     cd "$PROJECT_DIR"
     pm2 start ecosystem.config.js --only seyla-fit --update-env
 fi
