@@ -34,12 +34,10 @@ sleep 2
 
 # Генерируем админку
 echo "📦 Генерируем админку TinaCMS..."
-echo "⚠️  ВНИМАНИЕ: Генерация админки требует много памяти!"
-echo "   Если процесс упадет с ошибкой памяти, лучше сгенерировать"
-echo "   админку локально и загрузить через SCP"
+echo "   Используем лимит памяти: 1536MB (для 4GB RAM)"
 echo ""
 rm -rf public/admin
-NODE_OPTIONS="--max-old-space-size=768" \
+NODE_OPTIONS="--max-old-space-size=1536" \
 NEXT_PUBLIC_TINA_CLIENT_ID="$NEXT_PUBLIC_TINA_CLIENT_ID" \
 TINA_TOKEN="$TINA_TOKEN" \
 NEXT_PUBLIC_TINA_BRANCH="${NEXT_PUBLIC_TINA_BRANCH:-main}" \
