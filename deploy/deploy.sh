@@ -98,7 +98,14 @@ if [ -f .env.production ]; then
 fi
 
 # Запускаем только seyla-fit (webhook-server оставляем работать)
-pm2 start ecosystem.config.js --only seyla-fit --update-env 2>/dev/null || pm2 restart seyla-fit --update-env
+# Используем restart вместо start ecosystem.config.js, чтобы не перечитывать весь конфиг
+if pm2 list | grep -q "seyla-fit"; then
+    pm2 restart seyla-fit --update-env
+else
+    # Если seyla-fit нет в списке, запускаем только его
+    cd "$PROJECT_DIR"
+    pm2 start ecosystem.config.js --only seyla-fit --update-env
+fi
 pm2 save
 
 echo -e "${GREEN}✅ Деплой завершен!${NC}"
