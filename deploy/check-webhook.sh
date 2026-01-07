@@ -19,8 +19,21 @@ fi
 echo ""
 
 # 3. Проверяем доступность webhook
-echo "3️⃣ Проверка доступности webhook локально:"
-curl -s -o /dev/null -w "HTTP Status: %{http_code}\n" http://localhost:9000/webhook || echo "   ❌ Webhook не доступен"
+echo "3️⃣ Проверка доступности webhook локально (webhook-server):"
+LOCAL_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:9000/webhook 2>/dev/null || echo "000")
+if [ "$LOCAL_STATUS" = "405" ] || [ "$LOCAL_STATUS" = "200" ]; then
+    echo "   ✅ Webhook-server доступен (HTTP $LOCAL_STATUS - ожидается для GET запроса)"
+else
+    echo "   ⚠️  Webhook-server вернул статус: $LOCAL_STATUS"
+fi
+echo ""
+echo "3️⃣ Проверка доступности webhook через Nginx (HTTPS):"
+HTTPS_STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://seyla-fit.ru/webhook 2>/dev/null || echo "000")
+if [ "$HTTPS_STATUS" = "405" ] || [ "$HTTPS_STATUS" = "200" ]; then
+    echo "   ✅ Webhook доступен через HTTPS (HTTP $HTTPS_STATUS - ожидается для GET запроса)"
+else
+    echo "   ⚠️  Webhook вернул статус: $HTTPS_STATUS (возможна проблема с Nginx или SSL)"
+fi
 echo ""
 
 # 4. Проверяем Nginx конфигурацию

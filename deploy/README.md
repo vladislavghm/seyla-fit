@@ -225,11 +225,22 @@ pm2 restart seyla-fit
 
 ### SSL сертификат не работает
 
+**Автоматическая переустановка:**
+
+```bash
+cd ~/seyla-fit
+bash deploy/setup-ssl.sh
+```
+
+**Или вручную:**
+
 Проверьте DNS записи и попробуйте получить сертификат вручную:
 
 ```bash
 sudo certbot --nginx -d seyla-fit.ru -d www.seyla-fit.ru
 ```
+
+**Примечание:** После переустановки SSL может потребоваться восстановить конфигурацию `/webhook` (см. раздел "GitHub Webhook возвращает 404").
 
 ### Nginx возвращает 502 Bad Gateway
 
