@@ -104,14 +104,46 @@ except Exception as e:
     sys.exit(1)
 EOF
 
-if [ $? -eq 0 ] && sudo nginx -t > /dev/null 2>&1; then
-    sudo systemctl reload nginx
-    echo "✅ Nginx перезагружен"
-    echo "✅ Готово!"
+if [ $? -eq 0 ]; then
+    # Проверяем конфигурацию и показываем ошибки, если есть
+    if sudo nginx -t 2>&1; then
+        sudo systemctl reload nginx
+        echo "✅ Nginx перезагружен"
+        echo "✅ Готово!"
+    else
+        echo ""
+        echo "❌ Ошибка в конфигурации Nginx!"
+        echo "Восстанавливаем резервную копию..."
+        sudo cp "$BACKUP" "$NGINX_CONF"
+        echo ""
+        echo "Пожалуйста, добавьте конфигурацию вручную в файл: $NGINX_CONF"
+        echo ""
+        echo "См. подробную инструкцию: deploy/WEBHOOK_FIX.md"
+        echo ""
+        echo "Краткая инструкция:"
+        echo "  1. sudo nano $NGINX_CONF"
+        echo "  2. Найдите блок server с 'listen 443'"
+        echo "  3. Добавьте перед последней } этого блока:"
+        echo ""
+        echo "    # GitHub Webhook для автоматического деплоя"
+        echo "    location /webhook {"
+        echo "        proxy_pass http://127.0.0.1:9000;"
+        echo "        proxy_http_version 1.1;"
+        echo "        proxy_set_header Host \$host;"
+        echo "        proxy_set_header X-Real-IP \$remote_addr;"
+        echo "        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;"
+        echo "        proxy_set_header X-Forwarded-Proto \$scheme;"
+        echo "        proxy_set_header X-GitHub-Event \$http_x_github_event;"
+        echo "        proxy_set_header X-Hub-Signature-256 \$http_x_hub_signature_256;"
+        echo "        proxy_read_timeout 300;"
+        echo "        proxy_connect_timeout 300;"
+        echo "    }"
+        echo ""
+        echo "  4. sudo nginx -t && sudo systemctl reload nginx"
+        exit 1
+    fi
 else
-    echo "❌ Ошибка! Восстанавливаем резервную копию..."
-    sudo cp "$BACKUP" "$NGINX_CONF"
-    echo "Пожалуйста, добавьте конфигурацию вручную"
+    echo "❌ Ошибка при добавлении конфигурации!"
     exit 1
 fi
 
