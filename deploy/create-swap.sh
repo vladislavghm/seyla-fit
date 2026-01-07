@@ -3,7 +3,7 @@
 
 set -e
 
-SWAP_SIZE="4G"  # Размер swap файла (4GB для сборки Next.js)
+SWAP_SIZE="6G"  # Размер swap файла (6GB для сборки Next.js с TinaCMS)
 
 echo "📦 Проверяем и настраиваем swap файл..."
 
@@ -18,8 +18,8 @@ if [ -f /swapfile ]; then
     # Проверяем размер текущего swap
     CURRENT_SIZE_GB=$(echo "$CURRENT_SWAP" | awk '{printf "%.1f", $1}')
     
-    if (( $(echo "$CURRENT_SIZE_GB < 3.5" | bc -l 2>/dev/null || echo "1") )); then
-        echo "📈 Текущий swap: ${CURRENT_SIZE_GB}GB, увеличиваем до 4GB..."
+    if (( $(echo "$CURRENT_SIZE_GB < 5.5" | bc -l 2>/dev/null || echo "1") )); then
+        echo "📈 Текущий swap: ${CURRENT_SIZE_GB}GB, увеличиваем до 6GB..."
         
         # Отключаем текущий swap
         sudo swapoff /swapfile 2>/dev/null || true
@@ -27,20 +27,20 @@ if [ -f /swapfile ]; then
         # Удаляем старый файл
         sudo rm -f /swapfile
         
-        # Создаем новый swap файл 4GB
+        # Создаем новый swap файл 6GB
         sudo fallocate -l $SWAP_SIZE /swapfile
         sudo chmod 600 /swapfile
         sudo mkswap /swapfile
         sudo swapon /swapfile
         
-        echo "✅ Swap файл увеличен до 4GB!"
+        echo "✅ Swap файл увеличен до 6GB!"
     else
         echo "✅ Swap файл уже достаточного размера (${CURRENT_SIZE_GB}GB)"
     fi
 else
-    echo "📦 Создаем swap файл 4GB..."
+    echo "📦 Создаем swap файл 6GB..."
     
-    # Создаем swap файл 4GB
+    # Создаем swap файл 6GB
     sudo fallocate -l $SWAP_SIZE /swapfile
     sudo chmod 600 /swapfile
     sudo mkswap /swapfile
