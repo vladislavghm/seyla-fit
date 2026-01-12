@@ -73,7 +73,13 @@ export NEXT_PRIVATE_WORKERS=1
 export NODE_ENV=production
 export GENERATE_SOURCEMAP=false
 
-# Всегда удаляем .next для чистой сборки (приложение продолжит работать со старой версией)
+# Останавливаем приложение перед удалением .next для чистого перезапуска
+if pm2 list | grep -q "seyla-fit.*online"; then
+    echo -e "${YELLOW}   Останавливаем приложение перед очисткой...${NC}"
+    pm2 stop seyla-fit
+fi
+
+# Очищаем .next для чистой сборки
 echo -e "${YELLOW}   Очищаем .next для чистой сборки...${NC}"
 rm -rf .next
 
