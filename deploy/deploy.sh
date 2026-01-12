@@ -44,26 +44,27 @@ fi
 echo -e "${YELLOW}📦 Собираем новую версию (старая продолжает работать)...${NC}"
 
 # Генерируем TinaCMS файлы (клиент и админка)
-if [ ! -f "tina/__generated__/client.ts" ] || [ ! -d "public/admin" ]; then
+# Всегда пересобираем админку при деплое для гарантии актуальности
+if [ -n "$NEXT_PUBLIC_TINA_CLIENT_ID" ] && [ -n "$TINA_TOKEN" ]; then
     echo -e "${YELLOW}   Генерируем TinaCMS файлы (клиент и админка)...${NC}"
     
-    if [ -n "$NEXT_PUBLIC_TINA_CLIENT_ID" ] && [ -n "$TINA_TOKEN" ]; then
-        # Используем Tina Cloud API (генерирует и клиент, и админку)
-        rm -rf tina/__generated__
-        rm -rf public/admin
-        NODE_OPTIONS="--max-old-space-size=1024" \
-        NEXT_PUBLIC_TINA_CLIENT_ID="$NEXT_PUBLIC_TINA_CLIENT_ID" \
-        TINA_TOKEN="$TINA_TOKEN" \
-        NEXT_PUBLIC_TINA_BRANCH="${NEXT_PUBLIC_TINA_BRANCH:-main}" \
-        pnpm tinacms build 2>&1 || echo -e "${YELLOW}   ⚠️  TinaCMS генерация пропущена${NC}"
-        
-        # Проверяем что админка сгенерирована
-        if [ -d "public/admin" ]; then
-            echo -e "${GREEN}   ✓ Админка сгенерирована${NC}"
-        else
-            echo -e "${YELLOW}   ⚠️  Админка не сгенерирована${NC}"
-        fi
+    # Используем Tina Cloud API (генерирует и клиент, и админку)
+    rm -rf tina/__generated__
+    rm -rf public/admin
+    NODE_OPTIONS="--max-old-space-size=1024" \
+    NEXT_PUBLIC_TINA_CLIENT_ID="$NEXT_PUBLIC_TINA_CLIENT_ID" \
+    TINA_TOKEN="$TINA_TOKEN" \
+    NEXT_PUBLIC_TINA_BRANCH="${NEXT_PUBLIC_TINA_BRANCH:-main}" \
+    pnpm tinacms build 2>&1 || echo -e "${YELLOW}   ⚠️  TinaCMS генерация пропущена${NC}"
+    
+    # Проверяем что админка сгенерирована
+    if [ -d "public/admin" ]; then
+        echo -e "${GREEN}   ✓ Админка сгенерирована${NC}"
+    else
+        echo -e "${YELLOW}   ⚠️  Админка не сгенерирована${NC}"
     fi
+else
+    echo -e "${YELLOW}   ⚠️  Пропуск генерации TinaCMS (нет переменных окружения)${NC}"
 fi
 
 # Собираем Next.js (старое приложение продолжает работать)
@@ -99,11 +100,21 @@ fi
 if pm2 list | grep -q "seyla-fit.*online"; then
     echo -e "${YELLOW}   Выполняем graceful reload (zero-downtime)...${NC}"
     pm2 reload seyla-fit --update-env
+    # Даем время на graceful reload и проверяем статус
+    sleep 2
+    if pm2 list | grep -q "seyla-fit.*online"; then
+        echo -e "${GREEN}   ✓ Приложение успешно перезагружено${NC}"
+    else
+        echo -e "${RED}   ⚠️  Приложение не запустилось после reload, проверьте логи${NC}"
+        pm2 logs seyla-fit --lines 20 --err
+    fi
 elif pm2 list | grep -q "seyla-fit"; then
     # Если процесс есть, но не запущен - перезапускаем
+    echo -e "${YELLOW}   Перезапускаем приложение (процесс был остановлен)...${NC}"
     pm2 restart seyla-fit --update-env
 else
     # Если процесса нет - запускаем
+    echo -e "${YELLOW}   Запускаем приложение...${NC}"
     cd "$PROJECT_DIR"
     pm2 start ecosystem.config.js --only seyla-fit --update-env
 fi
