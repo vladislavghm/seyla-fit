@@ -73,15 +73,11 @@ export NEXT_PRIVATE_WORKERS=1
 export NODE_ENV=production
 export GENERATE_SOURCEMAP=false
 
-# Останавливаем приложение перед удалением .next для чистого перезапуска
-if pm2 list | grep -q "seyla-fit.*online"; then
-    echo -e "${YELLOW}   Останавливаем приложение перед очисткой...${NC}"
-    pm2 stop seyla-fit
+# Удаляем .next только если приложение не запущено (как было раньше)
+if ! pm2 list | grep -q "seyla-fit.*online"; then
+    echo -e "${YELLOW}   Приложение не запущено, очищаем .next...${NC}"
+    rm -rf .next
 fi
-
-# Очищаем .next для чистой сборки
-echo -e "${YELLOW}   Очищаем .next для чистой сборки...${NC}"
-rm -rf .next
 
 if ! pnpm next build --no-lint; then
     echo -e "${RED}   ❌ Сборка не удалась${NC}"
@@ -99,10 +95,10 @@ if [ -f .env.production ]; then
     set +a
 fi
 
-# Перезагружаем приложение (restart для полного применения изменений)
+# Перезагружаем приложение с нулевым простоем (graceful reload)
 if pm2 list | grep -q "seyla-fit.*online"; then
-    echo -e "${YELLOW}   Перезапускаем приложение для применения изменений...${NC}"
-    pm2 restart seyla-fit --update-env
+    echo -e "${YELLOW}   Выполняем graceful reload (zero-downtime)...${NC}"
+    pm2 reload seyla-fit --update-env
 elif pm2 list | grep -q "seyla-fit"; then
     # Если процесс есть, но не запущен - перезапускаем
     pm2 restart seyla-fit --update-env
