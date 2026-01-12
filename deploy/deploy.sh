@@ -93,11 +93,10 @@ if [ -f .env.production ]; then
     set +a
 fi
 
-# Перезагружаем приложение с нулевым простоем (graceful reload)
-# Новые соединения идут к новому процессу, старые завершают работу
+# Перезагружаем приложение (restart для полного применения изменений)
 if pm2 list | grep -q "seyla-fit.*online"; then
-    echo -e "${YELLOW}   Выполняем graceful reload (zero-downtime)...${NC}"
-    pm2 reload seyla-fit --update-env
+    echo -e "${YELLOW}   Перезапускаем приложение для применения изменений...${NC}"
+    pm2 restart seyla-fit --update-env
 elif pm2 list | grep -q "seyla-fit"; then
     # Если процесс есть, но не запущен - перезапускаем
     pm2 restart seyla-fit --update-env
