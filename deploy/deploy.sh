@@ -73,11 +73,9 @@ export NEXT_PRIVATE_WORKERS=1
 export NODE_ENV=production
 export GENERATE_SOURCEMAP=false
 
-# Удаляем .next только если приложение не запущено
-if ! pm2 list | grep -q "seyla-fit.*online"; then
-    echo -e "${YELLOW}   Приложение не запущено, очищаем .next...${NC}"
-    rm -rf .next
-fi
+# Всегда удаляем .next для чистой сборки (приложение продолжит работать со старой версией)
+echo -e "${YELLOW}   Очищаем .next для чистой сборки...${NC}"
+rm -rf .next
 
 if ! pnpm next build --no-lint; then
     echo -e "${RED}   ❌ Сборка не удалась${NC}"
