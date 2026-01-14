@@ -48,23 +48,101 @@ echo -e "${YELLOW}📦 Собираем новую версию (старая п
 if [ -n "$NEXT_PUBLIC_TINA_CLIENT_ID" ] && [ -n "$TINA_TOKEN" ]; then
     echo -e "${YELLOW}   Генерируем TinaCMS файлы (клиент и админка)...${NC}"
     
+    # Временно останавливаем webhook-server, если он запущен (он использует порт 9000)
+    WEBHOOK_RUNNING=false
+    if pm2 list | grep -q "webhook-server.*online"; then
+        echo -e "${YELLOW}   Временно останавливаем webhook-server (освобождаем порт 9000)...${NC}"
+        pm2 stop webhook-server 2>/dev/null || true
+        WEBHOOK_RUNNING=true
+        sleep 1
+    fi
+    
+    # Проверяем, не занят ли порт 9000 другим процессом
+    PORT_9000_IN_USE=false
+    if command -v lsof >/dev/null 2>&1; then
+        if lsof -ti:9000 >/dev/null 2>&1; then
+            PORT_9000_IN_USE=true
+        fi
+    elif command -v netstat >/dev/null 2>&1; then
+        if netstat -tuln 2>/dev/null | grep -q ":9000"; then
+            PORT_9000_IN_USE=true
+        fi
+    elif command -v ss >/dev/null 2>&1; then
+        if ss -tuln 2>/dev/null | grep -q ":9000"; then
+            PORT_9000_IN_USE=true
+        fi
+    fi
+    
+    if [ "$PORT_9000_IN_USE" = true ]; then
+        echo -e "${YELLOW}   Порт 9000 все еще занят, пытаемся освободить...${NC}"
+        # Пытаемся убить процесс на порту 9000
+        if command -v lsof >/dev/null 2>&1; then
+            lsof -ti:9000 | xargs kill -9 2>/dev/null || true
+        elif command -v fuser >/dev/null 2>&1; then
+            fuser -k 9000/tcp 2>/dev/null || true
+        fi
+        sleep 2
+    fi
+    
     # Используем Tina Cloud API (генерирует и клиент, и админку)
     rm -rf tina/__generated__
     rm -rf public/admin
-    NODE_OPTIONS="--max-old-space-size=1024" \
-    NEXT_PUBLIC_TINA_CLIENT_ID="$NEXT_PUBLIC_TINA_CLIENT_ID" \
-    TINA_TOKEN="$TINA_TOKEN" \
-    NEXT_PUBLIC_TINA_BRANCH="${NEXT_PUBLIC_TINA_BRANCH:-main}" \
-    pnpm tinacms build 2>&1 || echo -e "${YELLOW}   ⚠️  TinaCMS генерация пропущена${NC}"
+    
+    # Генерируем TinaCMS файлы с правильными переменными окружения
+    # Используем другой порт для datalayer, чтобы не конфликтовать с webhook-server
+    TINA_BUILD_SUCCESS=false
+    if NODE_OPTIONS="--max-old-space-size=1024" \
+       NEXT_PUBLIC_TINA_CLIENT_ID="$NEXT_PUBLIC_TINA_CLIENT_ID" \
+       TINA_TOKEN="$TINA_TOKEN" \
+       NEXT_PUBLIC_TINA_BRANCH="${NEXT_PUBLIC_TINA_BRANCH:-main}" \
+       TINA_DATALAYER_PORT=9001 \
+       pnpm tinacms build 2>&1; then
+        TINA_BUILD_SUCCESS=true
+    else
+        echo -e "${YELLOW}   ⚠️  Первая попытка генерации не удалась, пробуем без указания порта...${NC}"
+        # Пробуем без указания порта (после остановки webhook-server порт должен быть свободен)
+        if NODE_OPTIONS="--max-old-space-size=1024" \
+           NEXT_PUBLIC_TINA_CLIENT_ID="$NEXT_PUBLIC_TINA_CLIENT_ID" \
+           TINA_TOKEN="$TINA_TOKEN" \
+           NEXT_PUBLIC_TINA_BRANCH="${NEXT_PUBLIC_TINA_BRANCH:-main}" \
+           pnpm tinacms build 2>&1; then
+            TINA_BUILD_SUCCESS=true
+        else
+            echo -e "${RED}   ❌ Генерация TinaCMS не удалась после всех попыток${NC}"
+        fi
+    fi
+    
+    # Перезапускаем webhook-server, если он был запущен
+    if [ "$WEBHOOK_RUNNING" = true ]; then
+        echo -e "${YELLOW}   Перезапускаем webhook-server...${NC}"
+        pm2 start webhook-server 2>/dev/null || pm2 restart webhook-server 2>/dev/null || true
+    fi
+    
+    # Проверяем что клиент сгенерирован (критично для работы приложения)
+    if [ -f "tina/__generated__/client.js" ] || [ -f "tina/__generated__/client.ts" ]; then
+        echo -e "${GREEN}   ✓ TinaCMS клиент сгенерирован${NC}"
+    else
+        echo -e "${RED}   ❌ TinaCMS клиент НЕ сгенерирован! Приложение не сможет работать.${NC}"
+        if [ "$TINA_BUILD_SUCCESS" = false ]; then
+            echo -e "${RED}   Генерация не удалась. Проверьте логи выше.${NC}"
+            exit 1
+        fi
+    fi
     
     # Проверяем что админка сгенерирована
     if [ -d "public/admin" ]; then
         echo -e "${GREEN}   ✓ Админка сгенерирована${NC}"
     else
-        echo -e "${YELLOW}   ⚠️  Админка не сгенерирована${NC}"
+        echo -e "${YELLOW}   ⚠️  Админка не сгенерирована (не критично, но админка не будет доступна)${NC}"
     fi
 else
     echo -e "${YELLOW}   ⚠️  Пропуск генерации TinaCMS (нет переменных окружения)${NC}"
+    # Проверяем, есть ли уже сгенерированный клиент
+    if [ ! -f "tina/__generated__/client.js" ] && [ ! -f "tina/__generated__/client.ts" ]; then
+        echo -e "${RED}   ❌ TinaCMS клиент отсутствует и переменные окружения не заданы!${NC}"
+        echo -e "${RED}   Приложение не сможет работать. Проверьте .env.production${NC}"
+        exit 1
+    fi
 fi
 
 # Собираем Next.js (старое приложение продолжает работать)
@@ -118,6 +196,13 @@ else
     cd "$PROJECT_DIR"
     pm2 start ecosystem.config.js --only seyla-fit --update-env
 fi
+
+# Убеждаемся, что webhook-server запущен
+if ! pm2 list | grep -q "webhook-server.*online"; then
+    echo -e "${YELLOW}   Запускаем webhook-server...${NC}"
+    pm2 start ecosystem.config.js --only webhook-server --update-env 2>/dev/null || pm2 restart webhook-server --update-env 2>/dev/null || true
+fi
+
 pm2 save
 
 echo -e "${GREEN}✅ Деплой завершен!${NC}"
