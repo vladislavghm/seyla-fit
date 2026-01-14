@@ -4,6 +4,7 @@ import { Hero } from "./hero";
 import { Marquee } from "./marquee";
 import { Content } from "./content";
 import { About } from "./about";
+import { Advantages } from "./advantages";
 
 export const Blocks = (props: Omit<Page, "id" | "_sys" | "_values">) => {
   if (!props.blocks) return null;
@@ -30,6 +31,8 @@ const Block = (block: PageBlocks) => {
       return <Content data={block} />;
     case "PageBlocksAbout":
       return <About data={block} />;
+    case "PageBlocksAdvantages":
+      return <Advantages data={block} />;
     default:
       return null;
   }

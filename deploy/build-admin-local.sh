@@ -91,12 +91,13 @@ if [ "$PORT_9000_IN_USE" = true ]; then
 fi
 
 # Генерируем админку с увеличенным лимитом памяти
-echo -e "${YELLOW}   Генерируем админку (это может занять несколько минут)...${NC}"
+# Используем --local --skip-cloud-checks для локальной генерации без проверки удаленной схемы
+echo -e "${YELLOW}   Генерируем админку локально (это может занять несколько минут)...${NC}"
 if NODE_OPTIONS="--max-old-space-size=4096" \
    NEXT_PUBLIC_TINA_CLIENT_ID="$NEXT_PUBLIC_TINA_CLIENT_ID" \
    TINA_TOKEN="$TINA_TOKEN" \
    NEXT_PUBLIC_TINA_BRANCH="${NEXT_PUBLIC_TINA_BRANCH:-main}" \
-   pnpm tinacms build 2>&1; then
+   pnpm tinacms build --local --skip-cloud-checks 2>&1; then
     echo -e "${GREEN}   ✓ Админка успешно сгенерирована!${NC}"
 else
     echo -e "${RED}   ❌ Генерация админки не удалась${NC}"

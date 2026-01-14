@@ -4,6 +4,7 @@ import {
   marqueeBlockSchema,
   contentBlockSchema,
   aboutBlockSchema,
+  advantagesBlockSchema,
 } from '@/components/blocks/schemas';
 
 const Page: Collection = {
@@ -41,6 +42,7 @@ const Page: Collection = {
         marqueeBlockSchema,
         contentBlockSchema,
         aboutBlockSchema,
+        advantagesBlockSchema,
       ],
     },
   ],

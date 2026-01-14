@@ -14,33 +14,33 @@ export const About = ({ data }: { data: PageBlocksAbout }) => {
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
           {/* Текстовая часть слева */}
           <div className="space-y-6">
-            {data.title && (
+            {data.aboutTitle && (
               <h2
-                data-tina-field={tinaField(data, "title")}
+                data-tina-field={tinaField(data, "aboutTitle")}
                 className="text-4xl font-bold lg:text-5xl"
               >
-                {data.title}
+                {data.aboutTitle}
               </h2>
             )}
-            {data.body && (
+            {data.aboutBody && (
               <div
-                data-tina-field={tinaField(data, "body")}
+                data-tina-field={tinaField(data, "aboutBody")}
                 className="prose prose-lg max-w-none"
               >
-                <TinaMarkdown content={data.body} />
+                <TinaMarkdown content={data.aboutBody} />
               </div>
             )}
           </div>
 
           {/* Изображение справа */}
-          {data.image && (
+          {data.aboutImage && (
             <div
-              data-tina-field={tinaField(data, "image")}
+              data-tina-field={tinaField(data, "aboutImage")}
               className="relative aspect-4/3 overflow-hidden rounded-lg"
             >
               <Image
-                src={data.image}
-                alt={data.imageAlt || data.title || "О нас"}
+                src={data.aboutImage}
+                alt={data.aboutImageAlt || data.aboutTitle || "О нас"}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
@@ -59,8 +59,8 @@ export const aboutBlockSchema: Template = {
   ui: {
     previewSrc: "/blocks/about.png",
     defaultItem: {
-      title: "О нас",
-      body: "Студия растяжки и фитнеса Шпагат Просто — это место, где можно хорошо и с пользой провести время в кругу единомышленников. Это большое и светлое пространство без изнурительных тренировок. Место, в котором царит дружеская атмосфера и философия «фитнес, через любовь к себе»!\n\n8 направлений позволяют сделать программу тренировок разнообразной, интересной и эффективной.",
+      aboutTitle: "О нас",
+      aboutBody: "Студия растяжки и фитнеса Шпагат Просто — это место, где можно хорошо и с пользой провести время в кругу единомышленников. Это большое и светлое пространство без изнурительных тренировок. Место, в котором царит дружеская атмосфера и философия «фитнес, через любовь к себе»!\n\n8 направлений позволяют сделать программу тренировок разнообразной, интересной и эффективной.",
     },
   },
   fields: [
@@ -68,17 +68,17 @@ export const aboutBlockSchema: Template = {
     {
       type: "string",
       label: "Заголовок",
-      name: "title",
+      name: "aboutTitle",
     },
     {
       type: "rich-text",
       label: "Текст",
-      name: "body",
+      name: "aboutBody",
     },
     {
       type: "image",
       label: "Изображение",
-      name: "image",
+      name: "aboutImage",
       description: "Изображение для блока 'О нас'",
       // @ts-ignore
       uploadDir: () => "about",
@@ -86,7 +86,7 @@ export const aboutBlockSchema: Template = {
     {
       type: "string",
       label: "Альтернативный текст изображения",
-      name: "imageAlt",
+      name: "aboutImageAlt",
       description: "Текст для доступности (alt)",
     },
   ],
