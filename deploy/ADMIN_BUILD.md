@@ -12,6 +12,7 @@ bash deploy/build-admin-local.sh
 ```
 
 Скрипт:
+
 - Проверит наличие `.env.local` с переменными TinaCMS
 - Сгенерирует админку в `public/admin`
 - Покажет размер и команды для загрузки на сервер
@@ -23,13 +24,13 @@ bash deploy/build-admin-local.sh
 #### Вариант 1: Через SCP (рекомендуется)
 
 ```bash
-scp -r public/admin vladhoyl@ekbszsndmc:~/seyla-fit/public/
+scp -r public/admin vladhoyl@155.212.188.120:~/seyla-fit/public/
 ```
 
 #### Вариант 2: Через RSYNC (быстрее для обновлений)
 
 ```bash
-rsync -avz public/admin/ vladhoyl@ekbszsndmc:~/seyla-fit/public/admin/
+rsync -avz public/admin/ vladhoyl@155.212.188.120:~/seyla-fit/public/admin/
 ```
 
 #### Вариант 3: Через Git
@@ -43,6 +44,7 @@ git push
 ```
 
 Затем на сервере:
+
 ```bash
 git pull
 ```
@@ -56,6 +58,7 @@ bash deploy/deploy.sh
 ```
 
 Скрипт деплоя:
+
 - ✅ Сгенерирует только клиент TinaCMS (требует меньше памяти)
 - ✅ Сохранит существующую админку, если она уже есть
 - ✅ Не будет пытаться перегенерировать админку
@@ -63,6 +66,7 @@ bash deploy/deploy.sh
 ## Когда нужно обновлять админку?
 
 Обновляйте админку локально и загружайте на сервер, когда:
+
 - Изменилась схема TinaCMS (`tina/config.tsx` или коллекции)
 - Обновилась версия TinaCMS
 - Нужно обновить интерфейс админки
@@ -79,6 +83,7 @@ bash deploy/deploy.sh
 ### Ошибка "JavaScript heap out of memory"
 
 Увеличьте лимит памяти в `deploy/build-admin-local.sh`:
+
 ```bash
 NODE_OPTIONS="--max-old-space-size=8192"  # 8GB вместо 4GB
 ```
