@@ -59,6 +59,37 @@ if [ -d "public/admin" ]; then
     rm -rf public/admin
 fi
 
+# Проверяем, занят ли порт 9000 (TinaCMS dev server)
+PORT_9000_IN_USE=false
+if command -v lsof >/dev/null 2>&1; then
+    if lsof -ti:9000 >/dev/null 2>&1; then
+        PORT_9000_IN_USE=true
+    fi
+elif command -v netstat >/dev/null 2>&1; then
+    if netstat -ano 2>/dev/null | grep -q ":9000.*LISTENING"; then
+        PORT_9000_IN_USE=true
+    fi
+fi
+
+if [ "$PORT_9000_IN_USE" = true ]; then
+    echo -e "${YELLOW}   ⚠️  Порт 9000 занят (возможно, запущен pnpm dev)${NC}"
+    echo -e "${YELLOW}   Останавливаем процесс на порту 9000...${NC}"
+    
+    # Пытаемся остановить процесс на порту 9000
+    if command -v lsof >/dev/null 2>&1; then
+        lsof -ti:9000 | xargs kill -9 2>/dev/null || true
+    elif command -v netstat >/dev/null 2>&1; then
+        # На Windows через netstat
+        PID=$(netstat -ano 2>/dev/null | grep ":9000.*LISTENING" | awk '{print $5}' | head -1)
+        if [ -n "$PID" ]; then
+            taskkill //F //PID "$PID" 2>/dev/null || true
+        fi
+    fi
+    
+    sleep 2
+    echo -e "${YELLOW}   Продолжаем генерацию...${NC}"
+fi
+
 # Генерируем админку с увеличенным лимитом памяти
 echo -e "${YELLOW}   Генерируем админку (это может занять несколько минут)...${NC}"
 if NODE_OPTIONS="--max-old-space-size=4096" \
@@ -69,6 +100,7 @@ if NODE_OPTIONS="--max-old-space-size=4096" \
     echo -e "${GREEN}   ✓ Админка успешно сгенерирована!${NC}"
 else
     echo -e "${RED}   ❌ Генерация админки не удалась${NC}"
+    echo -e "${YELLOW}   💡 Убедитесь, что pnpm dev остановлен, и запустите скрипт снова${NC}"
     exit 1
 fi
 
