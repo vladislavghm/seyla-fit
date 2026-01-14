@@ -3,12 +3,7 @@ import {
   heroBlockSchema,
   marqueeBlockSchema,
   contentBlockSchema,
-  testimonialBlockSchema,
-  featureBlockSchema,
-  videoBlockSchema,
-  calloutBlockSchema,
-  statsBlockSchema,
-  ctaBlockSchema,
+  aboutBlockSchema,
 } from '@/components/blocks/schemas';
 
 const Page: Collection = {
@@ -44,13 +39,8 @@ const Page: Collection = {
       templates: [
         heroBlockSchema,
         marqueeBlockSchema,
-        calloutBlockSchema,
-        featureBlockSchema,
-        statsBlockSchema,
-        ctaBlockSchema,
         contentBlockSchema,
-        testimonialBlockSchema,
-        videoBlockSchema,
+        aboutBlockSchema,
       ],
     },
   ],
