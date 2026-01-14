@@ -47,6 +47,15 @@ echo -e "${YELLOW}📦 Собираем новую версию (старая п
 if [ -n "$NEXT_PUBLIC_TINA_CLIENT_ID" ] && [ -n "$TINA_TOKEN" ]; then
     echo -e "${YELLOW}   Генерируем TinaCMS клиент...${NC}"
     
+    # Временно останавливаем webhook-server, если он запущен (он использует порт 9000)
+    WEBHOOK_RUNNING=false
+    if pm2 list | grep -q "webhook-server.*online"; then
+        echo -e "${YELLOW}   Временно останавливаем webhook-server (освобождаем порт 9000)...${NC}"
+        pm2 stop webhook-server 2>/dev/null || true
+        WEBHOOK_RUNNING=true
+        sleep 1
+    fi
+    
     # Сохраняем админку, если она уже есть (она загружается отдельно с локальной машины)
     ADMIN_EXISTS=false
     if [ -d "public/admin" ]; then
@@ -72,6 +81,12 @@ if [ -n "$NEXT_PUBLIC_TINA_CLIENT_ID" ] && [ -n "$TINA_TOKEN" ]; then
         echo -e "${RED}   ❌ Генерация TinaCMS клиента не удалась${NC}"
     fi
     
+    # Перезапускаем webhook-server, если он был запущен
+    if [ "$WEBHOOK_RUNNING" = true ]; then
+        echo -e "${YELLOW}   Перезапускаем webhook-server...${NC}"
+        pm2 start webhook-server 2>/dev/null || pm2 restart webhook-server 2>/dev/null || true
+    fi
+    
     # Восстанавливаем админку, если она была сохранена
     if [ "$ADMIN_EXISTS" = true ]; then
         if [ -d "public/admin.backup" ]; then
@@ -81,9 +96,25 @@ if [ -n "$NEXT_PUBLIC_TINA_CLIENT_ID" ] && [ -n "$TINA_TOKEN" ]; then
         fi
     fi
     
-    # Проверяем что клиент сгенерирован (критично для работы приложения)
-    if [ -f "tina/__generated__/client.js" ] || [ -f "tina/__generated__/client.ts" ]; then
-        echo -e "${GREEN}   ✓ TinaCMS клиент сгенерирован${NC}"
+    # Проверяем что клиент сгенерирован правильно (критично для работы приложения)
+    CLIENT_FILE=""
+    if [ -f "tina/__generated__/client.js" ]; then
+        CLIENT_FILE="tina/__generated__/client.js"
+    elif [ -f "tina/__generated__/client.ts" ]; then
+        CLIENT_FILE="tina/__generated__/client.ts"
+    fi
+    
+    if [ -n "$CLIENT_FILE" ]; then
+        # Проверяем, что клиент содержит queries (важно для работы)
+        if grep -q "queries" "$CLIENT_FILE" 2>/dev/null; then
+            echo -e "${GREEN}   ✓ TinaCMS клиент сгенерирован и содержит queries${NC}"
+        else
+            echo -e "${RED}   ❌ TinaCMS клиент сгенерирован, но не содержит queries!${NC}"
+            if [ "$TINA_BUILD_SUCCESS" = false ]; then
+                echo -e "${RED}   Генерация не удалась. Проверьте логи выше.${NC}"
+                exit 1
+            fi
+        fi
     else
         echo -e "${RED}   ❌ TinaCMS клиент НЕ сгенерирован! Приложение не сможет работать.${NC}"
         if [ "$TINA_BUILD_SUCCESS" = false ]; then
