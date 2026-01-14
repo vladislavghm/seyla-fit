@@ -23,19 +23,11 @@
   "social": [
     {
       "icon": {
-        "name": "FaWhatsapp",
-        "color": "green",
+        "name": "BiLogoTelegram",
+        "color": "purple",
         "style": "regular"
       },
-      "url": "https://seyla-fit.ru/"
-    },
-    {
-      "icon": {
-        "name": "Vk",
-        "color": "default",
-        "style": "regular"
-      },
-      "url": "https://seyla-fit.ru/"
+      "url": "https://t.me/seylafit"
     }
   ]
 }
