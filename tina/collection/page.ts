@@ -8,6 +8,7 @@ import {
   pricingBlockSchema,
   faqBlockSchema,
   trialBlockSchema,
+  contactsBlockSchema,
 } from '@/components/blocks/schemas';
 
 const Page: Collection = {
@@ -49,6 +50,7 @@ const Page: Collection = {
         pricingBlockSchema,
         faqBlockSchema,
         trialBlockSchema,
+        contactsBlockSchema,
       ],
     },
   ],

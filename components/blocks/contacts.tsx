@@ -1,0 +1,210 @@
+"use client";
+import React from "react";
+import type { Template } from "tinacms";
+import type { PageBlocksContacts } from "@/tina/__generated__/types";
+import { tinaField } from "tinacms/dist/react";
+import { Section, sectionBlockSchemaField } from "@/components/layout/section";
+import { Icon } from "@/components/icon";
+import { normalizeIconData } from "@/lib/icon-utils";
+import { iconSchema } from "@/tina/fields/icon";
+
+export const Contacts = ({ data }: { data: PageBlocksContacts }) => {
+  return (
+    <Section background={data.background!} className="py-16 lg:py-24">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
+          {/* Левая часть: Контактная информация */}
+          <div className="space-y-6">
+            {data.contactsTitle && (
+              <h2
+                data-tina-field={tinaField(data, "contactsTitle")}
+                className="text-3xl font-bold lg:text-4xl"
+              >
+                {data.contactsTitle}
+              </h2>
+            )}
+
+            {/* Телефон */}
+            {data.contactsPhone && (
+              <div data-tina-field={tinaField(data, "contactsPhone")}>
+                <a
+                  href={`tel:${data.contactsPhone.replace(/\D/g, "")}`}
+                  className="text-2xl font-bold hover:opacity-70 transition-opacity"
+                >
+                  {data.contactsPhone}
+                </a>
+              </div>
+            )}
+
+            {/* Адрес */}
+            {data.contactsAddress && (
+              <div
+                data-tina-field={tinaField(data, "contactsAddress")}
+                className="text-lg text-gray-600"
+              >
+                {data.contactsAddress}
+              </div>
+            )}
+
+            {/* Социальные сети */}
+            {data.contactsSocial && data.contactsSocial.length > 0 && (
+              <div className="flex items-center gap-4 pt-4">
+                {data.contactsSocial.map((social, index) => {
+                  if (
+                    !social?.contactsSocialIcon ||
+                    !social?.contactsSocialUrl
+                  ) {
+                    return null;
+                  }
+                  const iconData = normalizeIconData(
+                    social.contactsSocialIcon,
+                    "regular"
+                  );
+                  if (!iconData) return null;
+
+                  return (
+                    <a
+                      key={index}
+                      href={social.contactsSocialUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-800 text-white hover:bg-gray-900 transition-colors"
+                      aria-label={iconData.name || "Social link"}
+                      data-tina-field={tinaField(social, "contactsSocialUrl")}
+                    >
+                      <Icon data={iconData} className="w-6 h-6" />
+                    </a>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Правая часть: Яндекс Карта */}
+          {data.contactsMapUrl && (
+            <div
+              className="w-full h-[400px] lg:h-[500px] rounded-lg overflow-hidden"
+              data-tina-field={tinaField(data, "contactsMapUrl")}
+            >
+              <iframe
+                src={data.contactsMapUrl}
+                width="100%"
+                height="100%"
+                frameBorder="0"
+                allowFullScreen
+                style={{ border: 0 }}
+                title="Карта"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    </Section>
+  );
+};
+
+export const contactsBlockSchema: Template = {
+  name: "contacts",
+  label: "Контакты",
+  ui: {
+    previewSrc: "/blocks/contacts.png",
+    defaultItem: {
+      contactsTitle: "Контакты:",
+      contactsPhone: "+7 (988) 510 08 80",
+      contactsAddress: "г. Ростов-на-Дону, ул. Мечникова 33А (2 этаж).",
+      contactsSocial: [
+        {
+          contactsSocialIcon: {
+            name: "FaWhatsapp",
+            color: "#25D366",
+          },
+          contactsSocialUrl: "https://wa.me/79885100880",
+        },
+        {
+          contactsSocialIcon: {
+            name: "AiFillInstagram",
+            color: "#E4405F",
+          },
+          contactsSocialUrl: "https://instagram.com/seylafit",
+        },
+        {
+          contactsSocialIcon: {
+            name: "Vk",
+            color: "#0077FF",
+          },
+          contactsSocialUrl: "https://vk.com/seylafit",
+        },
+      ],
+      contactsMapUrl:
+        "https://yandex.ru/map-widget/v1/?ll=39.7136%2C47.2356&z=16&pt=39.7136%2C47.2356",
+    },
+  },
+  fields: [
+    sectionBlockSchemaField as any,
+    {
+      type: "string",
+      label: "Заголовок",
+      name: "contactsTitle",
+      default: "Контакты:",
+    },
+    {
+      type: "string",
+      label: "Телефон",
+      name: "contactsPhone",
+      description: "Номер телефона для связи",
+    },
+    {
+      type: "string",
+      label: "Адрес",
+      name: "contactsAddress",
+      ui: {
+        component: "textarea",
+      },
+      description: "Адрес студии",
+    },
+    {
+      type: "object",
+      label: "Социальные сети",
+      name: "contactsSocial",
+      list: true,
+      ui: {
+        itemProps: (item) => {
+          return {
+            label: item?.contactsSocialIcon?.name || "Социальная сеть",
+          };
+        },
+        defaultItem: {
+          contactsSocialIcon: {
+            name: "FaWhatsapp",
+            color: "green",
+            style: "regular",
+          },
+          contactsSocialUrl: "",
+        },
+      },
+      fields: [
+        {
+          ...iconSchema,
+          name: "contactsSocialIcon",
+          label: "Иконка",
+        } as any,
+        {
+          type: "string",
+          label: "Ссылка",
+          name: "contactsSocialUrl",
+          description: "URL страницы в социальной сети",
+        },
+      ],
+    },
+    {
+      type: "string",
+      label: "URL Яндекс Карты",
+      name: "contactsMapUrl",
+      description:
+        "URL для встраивания Яндекс Карты. Получить можно на yandex.ru/map-constructor/",
+      ui: {
+        component: "textarea",
+      },
+    },
+  ],
+};
