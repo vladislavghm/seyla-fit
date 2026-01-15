@@ -5,6 +5,7 @@ import {
   contentBlockSchema,
   aboutBlockSchema,
   advantagesBlockSchema,
+  pricingBlockSchema,
 } from '@/components/blocks/schemas';
 
 const Page: Collection = {
@@ -43,6 +44,7 @@ const Page: Collection = {
         contentBlockSchema,
         aboutBlockSchema,
         advantagesBlockSchema,
+        pricingBlockSchema,
       ],
     },
   ],
