@@ -1,12 +1,12 @@
-import React from 'react';
-import { notFound } from 'next/navigation';
-import client from '@/tina/__generated__/client';
-import Layout from '@/components/layout/layout';
-import { Section } from '@/components/layout/section';
-import ClientPage from './client-page';
+import React from "react";
+import { notFound } from "next/navigation";
+import client from "@/tina/__generated__/client";
+import Layout from "@/components/layout/layout";
+import { Section } from "@/components/layout/section";
+import ClientPage from "./client-page";
 
 // Отключаем статическую генерацию - страница будет генерироваться динамически
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function Page({
@@ -15,7 +15,12 @@ export default async function Page({
   params: Promise<{ urlSegments: string[] }>;
 }) {
   const resolvedParams = await params;
-  const filepath = resolvedParams.urlSegments.join('/');
+  const filepath = resolvedParams.urlSegments.join("/");
+
+  // Исключаем путь admin из обработки TinaCMS
+  if (filepath === "admin" || filepath.startsWith("admin/")) {
+    notFound();
+  }
 
   let data;
   try {
@@ -53,7 +58,9 @@ export async function generateStaticParams() {
         break;
       }
 
-      allPages.data.pageConnection.edges.push(...pages.data.pageConnection.edges);
+      allPages.data.pageConnection.edges.push(
+        ...pages.data.pageConnection.edges
+      );
     }
 
     const params = allPages.data?.pageConnection.edges
@@ -61,13 +68,16 @@ export async function generateStaticParams() {
         urlSegments: edge?.node?._sys.breadcrumbs || [],
       }))
       .filter((x) => x.urlSegments.length >= 1)
-      .filter((x) => !x.urlSegments.every((x) => x === 'home')); // exclude the home page
+      .filter((x) => !x.urlSegments.every((x) => x === "home")); // exclude the home page
 
     return params;
   } catch (error) {
     // Если TinaCMS недоступен при сборке, возвращаем пустой массив
     // Страницы будут генерироваться динамически
-    console.warn('TinaCMS недоступен при generateStaticParams, используем динамическую генерацию:', error);
+    console.warn(
+      "TinaCMS недоступен при generateStaticParams, используем динамическую генерацию:",
+      error
+    );
     return [];
   }
 }
