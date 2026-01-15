@@ -48,7 +48,7 @@ export const Contacts = ({ data }: { data: PageBlocksContacts }) => {
 
             {/* Социальные сети */}
             {data.contactsSocial && data.contactsSocial.length > 0 && (
-              <div className="flex items-center gap-4 pt-4">
+              <div className="flex items-center gap-3 pt-4">
                 {data.contactsSocial.map((social, index) => {
                   if (
                     !social?.contactsSocialIcon ||
@@ -58,7 +58,7 @@ export const Contacts = ({ data }: { data: PageBlocksContacts }) => {
                   }
                   const iconData = normalizeIconData(
                     social.contactsSocialIcon,
-                    "regular"
+                    "small"
                   );
                   if (!iconData) return null;
 
@@ -68,11 +68,11 @@ export const Contacts = ({ data }: { data: PageBlocksContacts }) => {
                       href={social.contactsSocialUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-800 text-white hover:bg-gray-900 transition-colors"
+                      className="text-foreground hover:opacity-70 transition-opacity"
                       aria-label={iconData.name || "Social link"}
                       data-tina-field={tinaField(social, "contactsSocialUrl")}
                     >
-                      <Icon data={iconData} className="w-6 h-6" />
+                      <Icon data={iconData} className="w-[30px] h-[30px]" />
                     </a>
                   );
                 })}
@@ -198,10 +198,10 @@ export const contactsBlockSchema: Template = {
     },
     {
       type: "string",
-      label: "URL Яндекс Карты",
+      label: "URL Яндекс Карты (iframe)",
       name: "contactsMapUrl",
       description:
-        "URL для встраивания Яндекс Карты. Получить можно на yandex.ru/map-constructor/",
+        "URL для встраивания карты через iframe. Получить можно: 1) На Яндекс.Картах нажмите 'Поделиться' → 'Виджет карты' → скопируйте src из iframe. 2) Или используйте Конструктор карт: yandex.ru/dev/constructor",
       ui: {
         component: "textarea",
       },
