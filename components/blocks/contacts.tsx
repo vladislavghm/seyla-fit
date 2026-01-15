@@ -10,7 +10,11 @@ import { iconSchema } from "@/tina/fields/icon";
 
 export const Contacts = ({ data }: { data: PageBlocksContacts }) => {
   return (
-    <Section background={data.background!} className="py-16 lg:py-24">
+    <Section
+      background={data.background!}
+      className="py-16 lg:py-24"
+      id="contacts"
+    >
       <div className="mx-auto max-w-7xl px-6">
         <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
           {/* Левая часть: Контактная информация */}

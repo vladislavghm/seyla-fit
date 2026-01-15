@@ -9,7 +9,7 @@ import Image from "next/image";
 
 export const About = ({ data }: { data: PageBlocksAbout }) => {
   return (
-    <Section background={data.background!} className="py-16 lg:py-24">
+    <Section background={data.background!} className="py-16 lg:py-24" id="about">
       <div className="mx-auto max-w-7xl px-6">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
           {/* Текстовая часть слева */}

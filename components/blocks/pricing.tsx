@@ -15,6 +15,7 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
             key={sectionIndex}
             background={(section as any)?.background || data.background!}
             className="py-16 lg:py-24"
+            id={sectionIndex === 0 ? "tickets" : undefined}
             data-tina-field={tinaField(section)}
           >
             <div className="mx-auto max-w-7xl px-6">
