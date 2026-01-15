@@ -7,6 +7,7 @@ import { tinaField } from "tinacms/dist/react";
 import { PageBlocksHero } from "@/tina/__generated__/types";
 import { Button } from "@/components/ui/button";
 import { ColorPickerInput } from "@/tina/fields/colorPicker";
+import { motion } from "motion/react";
 export const Hero = ({ data }: { data: PageBlocksHero }) => {
   const heroData = data as any;
 
@@ -23,9 +24,8 @@ export const Hero = ({ data }: { data: PageBlocksHero }) => {
       backgroundColor?.toLowerCase().includes("white"));
 
   const textColorClass = isLightBackground ? "text-gray-900" : "text-white";
-  const buttonClass = isLightBackground
-    ? "bg-gray-900 text-white hover:bg-gray-800"
-    : "bg-white text-gray-900 hover:bg-gray-100";
+  const buttonClass =
+    "bg-white text-gray-900 border-2 border-white hover:bg-gray-800 hover:text-white hover:border-white transition-all duration-300";
 
   // Стили для фона
   const backgroundStyle: React.CSSProperties = {
@@ -45,66 +45,114 @@ export const Hero = ({ data }: { data: PageBlocksHero }) => {
       {/* Overlay для читаемости текста на фоновом изображении */}
       {backgroundImage && <div className="absolute inset-0 bg-black/20" />}
 
-      <div className="relative z-10 mx-auto w-full max-w-full px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-          {/* Левая часть: Заголовок, описание, кнопка */}
-          <div className={textColorClass}>
-            {heroData?.headline && (
-              <h1
-                className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6"
-                data-tina-field={tinaField(data, "headline")}
-              >
-                {heroData.headline}
-              </h1>
-            )}
+      {/* Левая часть: Заголовок, описание, кнопка */}
+      <div
+        className={`relative z-10 w-full max-w-[766px] px-4 sm:px-6 lg:px-8 ${textColorClass}`}
+      >
+        {heroData?.headline && (
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6"
+            data-tina-field={tinaField(data, "headline")}
+          >
+            {heroData.headline}
+          </motion.h1>
+        )}
 
-            {heroData?.description && (
-              <p
-                className={`text-lg md:text-xl mb-8 ${
-                  isLightBackground ? "text-gray-700" : "text-white/90"
-                }`}
-                data-tina-field={tinaField(data, "description")}
-              >
-                {heroData.description}
-              </p>
-            )}
+        {heroData?.description && (
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+            className={`text-lg md:text-xl mb-8 ${
+              isLightBackground ? "text-gray-700" : "text-white/90"
+            }`}
+            data-tina-field={tinaField(data, "description")}
+          >
+            {heroData.description}
+          </motion.p>
+        )}
 
-            {heroData?.buttonLabel && (
-              <div data-tina-field={tinaField(data, "buttonLabel")}>
-                <Button
-                  asChild
-                  size="lg"
-                  className={`${buttonClass} rounded-lg px-8 py-6 text-lg font-semibold`}
+        {heroData?.buttonLabel && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut", delay: 0.4 }}
+            data-tina-field={tinaField(data, "buttonLabel")}
+          >
+            <Button
+              asChild
+              size="lg"
+              className={`${buttonClass} rounded-none px-8 py-4 text-lg font-semibold`}
+            >
+              <Link href={heroData.buttonLink || "#"}>
+                {heroData.buttonLabel}
+              </Link>
+            </Button>
+          </motion.div>
+        )}
+      </div>
+
+      {/* Преимущества с абсолютным позиционированием относительно секции */}
+      {heroData?.benefits && heroData.benefits.length > 0 && (
+        <>
+          {/* Десктопная версия: абсолютное позиционирование */}
+          {heroData.benefits.map(
+            (benefit: any, index: number) =>
+              benefit?.text && (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{
+                    duration: 0.6,
+                    ease: "easeOut",
+                    delay: 0.6 + index * 0.2,
+                  }}
+                  className={`hidden lg:block absolute text-right text-lg md:text-xl lg:text-xl max-w-md z-10 ${
+                    isLightBackground ? "text-gray-700" : "text-white"
+                  }`}
+                  style={{
+                    right: "5%",
+                    top: `${30 + index * 20}%`,
+                  }}
+                  data-tina-field={tinaField(benefit, "text")}
                 >
-                  <Link href={heroData.buttonLink || "#"}>
-                    {heroData.buttonLabel}
-                  </Link>
-                </Button>
-              </div>
-            )}
-          </div>
+                  {benefit.text}
+                </motion.div>
+              )
+          )}
 
-          {/* Правая часть: Преимущества */}
-          {heroData?.benefits && heroData.benefits.length > 0 && (
-            <div className="space-y-4">
+          {/* Мобильная версия: в списке */}
+          <div className="lg:hidden relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 mt-8">
+            <div className="flex flex-col items-end space-y-4">
               {heroData.benefits.map(
                 (benefit: any, index: number) =>
                   benefit?.text && (
-                    <div
+                    <motion.div
                       key={index}
-                      className={`text-lg md:text-xl ${
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{
+                        duration: 0.6,
+                        ease: "easeOut",
+                        delay: 0.6 + index * 0.2,
+                      }}
+                      className={`text-right text-lg md:text-xl ${
                         isLightBackground ? "text-gray-700" : "text-white"
                       }`}
                       data-tina-field={tinaField(benefit, "text")}
                     >
                       {benefit.text}
-                    </div>
+                    </motion.div>
                   )
               )}
             </div>
-          )}
-        </div>
-      </div>
+          </div>
+        </>
+      )}
     </section>
   );
 };
