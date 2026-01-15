@@ -12,7 +12,7 @@ import ErrorBoundary from "@/components/error-boundary";
 import { ArrowRight, UserRound } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Section } from "@/components/layout/section";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface ClientPostProps {
   data: PostConnectionQuery;
@@ -34,14 +34,15 @@ export default function PostsClientPage(props: ClientPostProps) {
         id: post.id,
         published: formattedDate,
         title: post.title,
-        tags: post.tags?.map((tag) => tag?.tag?.name) || [],
+        tags: post.tags
+          ? typeof post.tags === "string"
+            ? [post.tags]
+            : []
+          : [],
         url: `/posts/${post._sys.breadcrumbs.join("/")}`,
         excerpt: post.excerpt,
         heroImg: post.heroImg,
-        author: {
-          name: post.author?.name || "Anonymous",
-          avatar: post.author?.avatar,
-        },
+        author: post.author || "Anonymous",
       };
     }) || [];
 
@@ -103,13 +104,6 @@ export default function PostsClientPage(props: ClientPostProps) {
                     </div>
                     <div className="mt-6 flex items-center space-x-4 text-sm md:mt-8">
                       <Avatar>
-                        {post.author.avatar && (
-                          <AvatarImage
-                            src={post.author.avatar}
-                            alt={post.author.name}
-                            className="h-8 w-8"
-                          />
-                        )}
                         <AvatarFallback>
                           <UserRound
                             size={16}
@@ -120,7 +114,7 @@ export default function PostsClientPage(props: ClientPostProps) {
                         </AvatarFallback>
                       </Avatar>
                       <span className="text-muted-foreground">
-                        {post.author.name}
+                        {post.author}
                       </span>
                       <span className="text-muted-foreground">•</span>
                       <span className="text-muted-foreground">

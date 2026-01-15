@@ -51,24 +51,11 @@ export default function PostClientPage(props: ClientPostProps) {
         <div data-tina-field={tinaField(post, 'author')} className='flex items-center justify-center mb-16'>
           {post.author && (
             <>
-              {post.author.avatar && (
-                <div className='shrink-0 mr-4'>
-                  <Image
-                    data-tina-field={tinaField(post.author, 'avatar')}
-                    priority={true}
-                    className='h-14 w-14 object-cover rounded-full shadow-xs'
-                    src={post.author.avatar}
-                    alt={post.author.name}
-                    width={500}
-                    height={500}
-                  />
-                </div>
-              )}
               <p
-                data-tina-field={tinaField(post.author, 'name')}
+                data-tina-field={tinaField(post, 'author')}
                 className='text-base font-medium text-gray-600 group-hover:text-gray-800 dark:text-gray-200 dark:group-hover:text-white'
               >
-                {post.author.name}
+                {post.author}
               </p>
               <span className='font-bold text-gray-200 dark:text-gray-500 mx-2'>—</span>
             </>
