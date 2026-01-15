@@ -6,4 +6,5 @@ export { aboutBlockSchema } from './about';
 export { advantagesBlockSchema } from './advantages';
 export { pricingBlockSchema } from './pricing';
 export { faqBlockSchema } from './faq';
+export { trialBlockSchema } from './trial';
 

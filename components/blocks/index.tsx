@@ -7,6 +7,7 @@ import { About } from "./about";
 import { Advantages } from "./advantages";
 import { Pricing } from "./pricing";
 import { Faq } from "./faq";
+import { Trial } from "./trial";
 
 export const Blocks = (props: Omit<Page, "id" | "_sys" | "_values">) => {
   if (!props.blocks) return null;
@@ -39,6 +40,8 @@ const Block = (block: PageBlocks) => {
       return <Pricing data={block} />;
     case "PageBlocksFaq":
       return <Faq data={block} />;
+    case "PageBlocksTrial":
+      return <Trial data={block} />;
     default:
       return null;
   }
