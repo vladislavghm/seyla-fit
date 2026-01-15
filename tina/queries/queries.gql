@@ -7,11 +7,7 @@ query pageQuery {
         date
         title
         excerpt
-        author {
-          ... on Author {
-            ...AuthorParts
-          }
-        }
+        author
         _sys {
           filename
         }
@@ -31,11 +27,5 @@ query blogPostQuery($relativePath: String!) {
   ...LayoutQueryFragment
   post(relativePath: $relativePath) {
     ...PostParts
-    author {
-      ... on Author {
-        name
-        avatar
-      }
-    }
   }
 }

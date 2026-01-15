@@ -2,8 +2,6 @@
 import React from "react";
 import type { Template } from "tinacms";
 import { TinaMarkdown } from "tinacms/dist/rich-text";
-// Типы будут сгенерированы после запуска pnpm dev
-// @ts-ignore
 import type { PageBlocksAdvantages } from "@/tina/__generated__/types";
 import { tinaField } from "tinacms/dist/react";
 import { Section, sectionBlockSchemaField } from "@/components/layout/section";
@@ -20,7 +18,7 @@ export const Advantages = ({ data }: { data: PageBlocksAdvantages }) => {
             {data.advantagesTitle}
           </h2>
         )}
-        
+
         <div className="space-y-8">
           {data.advantagesItems &&
             data.advantagesItems.map((item, index) => (
@@ -45,10 +43,15 @@ export const Advantages = ({ data }: { data: PageBlocksAdvantages }) => {
                     )}
                     {item?.advantagesItemDescription && (
                       <div
-                        data-tina-field={tinaField(item, "advantagesItemDescription")}
+                        data-tina-field={tinaField(
+                          item,
+                          "advantagesItemDescription"
+                        )}
                         className="prose prose-lg max-w-none"
                       >
-                        <TinaMarkdown content={item.advantagesItemDescription} />
+                        <TinaMarkdown
+                          content={item.advantagesItemDescription}
+                        />
                       </div>
                     )}
                   </div>

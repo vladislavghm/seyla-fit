@@ -1,5 +1,3 @@
-import React from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Collection } from "tinacms";
 
 const Post: Collection = {
@@ -36,38 +34,10 @@ const Post: Collection = {
       },
     },
     {
-      type: "reference",
+      type: "string",
       label: "Author",
       name: "author",
-      collections: ["author"],
-      ui: {
-        //@ts-ignore
-        optionComponent: (
-          props: {
-            name?: string;
-            avatar: string;
-          },
-          _internalSys: { path: string }
-        ) => {
-          const { name, avatar } = props;
-          if (!name) return _internalSys.path;
-
-          return (
-            <p className="flex min-h-8 items-center gap-4">
-              <Avatar>
-                {avatar && <AvatarImage src={avatar} alt={`${name} Profile`} />}
-                <AvatarFallback>
-                  {name
-                    .split(" ")
-                    .map((part) => part[0]?.toUpperCase() || "")
-                    .join("")}
-                </AvatarFallback>
-              </Avatar>
-              {name}
-            </p>
-          );
-        },
-      },
+      description: "Имя автора поста",
     },
     {
       type: "datetime",
@@ -79,31 +49,10 @@ const Post: Collection = {
       },
     },
     {
-      type: "object",
+      type: "string",
       label: "Tags",
       name: "tags",
-      list: true,
-      fields: [
-        {
-          type: "reference",
-          label: "Tag",
-          name: "tag",
-          collections: ["tag"],
-          ui: {
-            optionComponent: (
-              props: {
-                name?: string;
-              },
-              _internalSys: { path: string }
-            ) => props.name || _internalSys.path,
-          },
-        },
-      ],
-      ui: {
-        itemProps: (item) => {
-          return { label: item?.tag };
-        },
-      },
+      description: "Теги поста (через запятую)",
     },
     {
       type: "rich-text",
