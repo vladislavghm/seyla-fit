@@ -5,29 +5,42 @@ import { TinaMarkdown } from "tinacms/dist/rich-text";
 import type { PageBlocksAdvantages } from "@/tina/__generated__/types";
 import { tinaField } from "tinacms/dist/react";
 import { Section, sectionBlockSchemaField } from "@/components/layout/section";
+import { motion } from "motion/react";
 
 export const Advantages = ({ data }: { data: PageBlocksAdvantages }) => {
   return (
     <Section background={data.background!} className="py-16 lg:py-24">
       <div className="mx-auto max-w-5xl px-6">
         {data.advantagesTitle && (
-          <h2
+          <motion.h2
+            initial={{ x: 50, opacity: 0 }}
+            whileInView={{ x: 0, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
             data-tina-field={tinaField(data, "advantagesTitle")}
             className="mb-12 text-center text-4xl font-bold lg:text-5xl"
           >
             {data.advantagesTitle}
-          </h2>
+          </motion.h2>
         )}
 
         <div className="space-y-8">
           {data.advantagesItems &&
             data.advantagesItems.map((item, index) => (
-              <div
+              <motion.div
                 key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{
+                  duration: 0.5,
+                  ease: "easeOut",
+                  delay: index * 0.15,
+                }}
                 className="border-t border-gray-300 pt-8 first:border-t-0 first:pt-0"
               >
                 <div className="flex gap-6">
-                  <div className="flex-shrink-0">
+                  <div className="shrink-0">
                     <span className="text-2xl font-light text-gray-500">
                       {String(index + 1).padStart(2, "0")}.
                     </span>
@@ -56,7 +69,7 @@ export const Advantages = ({ data }: { data: PageBlocksAdvantages }) => {
                     )}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
         </div>
       </div>

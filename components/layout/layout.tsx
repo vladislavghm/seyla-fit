@@ -3,6 +3,7 @@ import { LayoutProvider } from "./layout-context";
 import client from "../../tina/__generated__/client";
 import { Header } from "./nav/header";
 import { Footer } from "./nav/footer";
+import { PageLoader } from "./page-loader";
 
 type LayoutProps = PropsWithChildren & {
   rawPageData?: any;
@@ -28,6 +29,7 @@ export default async function Layout({ children, rawPageData }: LayoutProps) {
       footer={footerData.data.footer}
       pageData={rawPageData}
     >
+      <PageLoader />
       <Header />
       <main className="overflow-x-hidden">{children}</main>
       <Footer />

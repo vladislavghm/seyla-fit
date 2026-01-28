@@ -46,20 +46,28 @@ export const Trainings = ({ data }: { data: PageBlocksTrainings }) => {
           {/* Основной заголовок */}
           <div className="relative z-10 text-center">
             {data.trainingsTitle && (
-              <h2
+              <motion.h2
+                initial={{ x: -50, opacity: 0 }}
+                whileInView={{ x: 0, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
                 data-tina-field={tinaField(data, "trainingsTitle")}
                 className="mb-4 text-4xl lg:text-6xl font-bold text-white"
               >
                 {data.trainingsTitle}
-              </h2>
+              </motion.h2>
             )}
             {data.trainingsSubtitle && (
-              <p
+              <motion.p
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
                 data-tina-field={tinaField(data, "trainingsSubtitle")}
                 className="text-lg lg:text-xl text-white/90"
               >
                 {data.trainingsSubtitle}
-              </p>
+              </motion.p>
             )}
           </div>
         </div>

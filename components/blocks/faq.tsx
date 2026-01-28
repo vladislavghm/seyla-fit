@@ -5,6 +5,7 @@ import { TinaMarkdown } from "tinacms/dist/rich-text";
 import type { PageBlocksFaq } from "@/tina/__generated__/types";
 import { tinaField } from "tinacms/dist/react";
 import { Section, sectionBlockSchemaField } from "@/components/layout/section";
+import { motion, AnimatePresence } from "motion/react";
 
 export const Faq = ({ data }: { data: PageBlocksFaq }) => {
   const [openIndex, setOpenIndex] = useState<number | null>(
@@ -19,12 +20,16 @@ export const Faq = ({ data }: { data: PageBlocksFaq }) => {
     <Section background={data.background!} className="py-16 lg:py-24">
       <div className="mx-auto max-w-4xl px-6">
         {data.faqTitle && (
-          <h2
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
             data-tina-field={tinaField(data, "faqTitle")}
             className="mb-12 text-center text-4xl font-bold lg:text-5xl"
           >
             {data.faqTitle}
-          </h2>
+          </motion.h2>
         )}
 
         <div className="space-y-4">
@@ -32,8 +37,16 @@ export const Faq = ({ data }: { data: PageBlocksFaq }) => {
             data.faqItems.map((item, index) => {
               const isOpen = openIndex === index;
               return (
-                <div
+                <motion.div
                   key={index}
+                  initial={{ x: -50, opacity: 0 }}
+                  whileInView={{ x: 0, opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{
+                    duration: 0.5,
+                    ease: "easeOut",
+                    delay: index * 0.1,
+                  }}
                   className="border-b border-gray-200 last:border-b-0"
                   data-tina-field={tinaField(item)}
                 >
@@ -50,19 +63,31 @@ export const Faq = ({ data }: { data: PageBlocksFaq }) => {
                         {item.faqItemQuestion}
                       </h3>
                     )}
-                    <span className="shrink-0 text-2xl font-light text-gray-600">
-                      {isOpen ? "×" : "+"}
-                    </span>
-                  </button>
-                  {isOpen && item?.faqItemAnswer && (
-                    <div
-                      data-tina-field={tinaField(item, "faqItemAnswer")}
-                      className="pb-6 prose prose-lg max-w-none text-gray-700"
+                    <motion.span
+                      className="shrink-0 text-2xl font-light text-gray-600"
+                      animate={{ rotate: isOpen ? 45 : 0 }}
+                      transition={{ duration: 0.3 }}
                     >
-                      <TinaMarkdown content={item.faqItemAnswer} />
-                    </div>
-                  )}
-                </div>
+                      {isOpen ? "×" : "+"}
+                    </motion.span>
+                  </button>
+                  <AnimatePresence>
+                    {isOpen && item?.faqItemAnswer && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        style={{ overflow: "hidden" }}
+                        data-tina-field={tinaField(item, "faqItemAnswer")}
+                      >
+                        <div className="pb-6 prose prose-lg max-w-none text-gray-700">
+                          <TinaMarkdown content={item.faqItemAnswer} />
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
               );
             })}
         </div>

@@ -7,6 +7,7 @@ import { Section, sectionBlockSchemaField } from "@/components/layout/section";
 import { Icon } from "@/components/icon";
 import { normalizeIconData } from "@/lib/icon-utils";
 import { iconSchema } from "@/tina/fields/icon";
+import { motion } from "motion/react";
 
 export const Contacts = ({ data }: { data: PageBlocksContacts }) => {
   return (
@@ -17,42 +18,62 @@ export const Contacts = ({ data }: { data: PageBlocksContacts }) => {
     >
       <div className="mx-auto max-w-7xl px-6">
         <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
-          {/* Левая часть: Контактная информация */}
+          {/* Левая часть: Контактная информация — появление слева по очереди */}
           <div className="space-y-6">
             {data.contactsTitle && (
-              <h2
+              <motion.h2
+                initial={{ x: -50, opacity: 0 }}
+                whileInView={{ x: 0, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
                 data-tina-field={tinaField(data, "contactsTitle")}
                 className="text-3xl font-bold lg:text-4xl"
               >
                 {data.contactsTitle}
-              </h2>
+              </motion.h2>
             )}
 
             {/* Телефон */}
             {data.contactsPhone && (
-              <div data-tina-field={tinaField(data, "contactsPhone")}>
+              <motion.div
+                initial={{ x: -50, opacity: 0 }}
+                whileInView={{ x: 0, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
+                data-tina-field={tinaField(data, "contactsPhone")}
+              >
                 <a
                   href={`tel:${data.contactsPhone.replace(/\D/g, "")}`}
                   className="text-2xl font-bold hover:opacity-70 transition-opacity"
                 >
                   {data.contactsPhone}
                 </a>
-              </div>
+              </motion.div>
             )}
 
             {/* Адрес */}
             {data.contactsAddress && (
-              <div
+              <motion.div
+                initial={{ x: -50, opacity: 0 }}
+                whileInView={{ x: 0, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: 0.25 }}
                 data-tina-field={tinaField(data, "contactsAddress")}
                 className="text-lg text-gray-600"
               >
                 {data.contactsAddress}
-              </div>
+              </motion.div>
             )}
 
             {/* Социальные сети */}
             {data.contactsSocial && data.contactsSocial.length > 0 && (
-              <div className="flex items-center gap-3 pt-4">
+              <motion.div
+                initial={{ x: -50, opacity: 0 }}
+                whileInView={{ x: 0, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: 0.35 }}
+                className="flex items-center gap-3 pt-4"
+              >
                 {data.contactsSocial.map((social, index) => {
                   if (
                     !social?.contactsSocialIcon ||
@@ -80,13 +101,17 @@ export const Contacts = ({ data }: { data: PageBlocksContacts }) => {
                     </a>
                   );
                 })}
-              </div>
+              </motion.div>
             )}
           </div>
 
-          {/* Правая часть: Яндекс Карта */}
+          {/* Правая часть: Яндекс Карта — подъезжает справа */}
           {data.contactsMapUrl && (
-            <div
+            <motion.div
+              initial={{ x: 50, opacity: 0 }}
+              whileInView={{ x: 0, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
               className="w-full h-[400px] lg:h-[500px] rounded-lg overflow-hidden"
               data-tina-field={tinaField(data, "contactsMapUrl")}
             >
@@ -99,7 +124,7 @@ export const Contacts = ({ data }: { data: PageBlocksContacts }) => {
                 style={{ border: 0 }}
                 title="Карта"
               />
-            </div>
+            </motion.div>
           )}
         </div>
       </div>

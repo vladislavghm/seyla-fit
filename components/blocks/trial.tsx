@@ -5,6 +5,7 @@ import { TinaMarkdown } from "tinacms/dist/rich-text";
 import type { PageBlocksTrial } from "@/tina/__generated__/types";
 import { tinaField } from "tinacms/dist/react";
 import { sectionBlockSchemaField } from "@/components/layout/section";
+import { motion } from "motion/react";
 
 export const Trial = ({ data }: { data: PageBlocksTrial }) => {
   const [formData, setFormData] = useState({
@@ -94,28 +95,42 @@ export const Trial = ({ data }: { data: PageBlocksTrial }) => {
       {/* Контент */}
       <div className="relative z-10 mx-auto max-w-7xl px-6">
         <div className="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-12">
-          {/* Левая часть: Текст */}
+          {/* Левая часть: Текст — появление слева по очереди */}
           <div className="text-white">
             {data.trialHeadline && (
-              <h2
+              <motion.h2
+                initial={{ x: -50, opacity: 0 }}
+                whileInView={{ x: 0, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
                 data-tina-field={tinaField(data, "trialHeadline")}
                 className="mb-6 text-3xl font-bold lg:text-4xl xl:text-5xl"
               >
                 {data.trialHeadline}
-              </h2>
+              </motion.h2>
             )}
             {data.trialDescription && (
-              <div
+              <motion.div
+                initial={{ x: -50, opacity: 0 }}
+                whileInView={{ x: 0, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
                 data-tina-field={tinaField(data, "trialDescription")}
                 className="prose prose-lg prose-invert max-w-none"
               >
                 <TinaMarkdown content={data.trialDescription} />
-              </div>
+              </motion.div>
             )}
           </div>
 
-          {/* Правая часть: Форма */}
-          <div className="bg-white rounded-lg p-8 shadow-xl">
+          {/* Правая часть: Форма — подъезжает справа целиком */}
+          <motion.div
+            initial={{ x: 50, opacity: 0 }}
+            whileInView={{ x: 0, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
+            className="bg-white rounded-lg p-8 shadow-xl"
+          >
             {data.trialFormTitle && (
               <h3
                 data-tina-field={tinaField(data, "trialFormTitle")}
@@ -206,7 +221,7 @@ export const Trial = ({ data }: { data: PageBlocksTrial }) => {
                 </p>
               )}
             </form>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

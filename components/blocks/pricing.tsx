@@ -5,6 +5,7 @@ import { TinaMarkdown } from "tinacms/dist/rich-text";
 import type { PageBlocksPricing } from "@/tina/__generated__/types";
 import { tinaField } from "tinacms/dist/react";
 import { Section, sectionBlockSchemaField } from "@/components/layout/section";
+import { motion } from "motion/react";
 
 export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
   return (
@@ -21,23 +22,38 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
             <div className="mx-auto max-w-7xl px-6">
               {/* Заголовок секции */}
               {section?.pricingSectionTitle && (
-                <h2
+                <motion.h2
+                  initial={{ x: -50, opacity: 0 }}
+                  whileInView={{ x: 0, opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, ease: "easeOut" }}
                   data-tina-field={tinaField(section, "pricingSectionTitle")}
                   className="mb-12 text-center text-4xl font-bold lg:text-5xl"
                 >
                   {section.pricingSectionTitle}
-                </h2>
+                </motion.h2>
               )}
 
               {/* Тарифы секции */}
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {section?.pricingSectionItems &&
-                  section.pricingSectionItems.map((item, itemIndex) => (
-                    <div
-                      key={itemIndex}
-                      className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow"
-                      data-tina-field={tinaField(item)}
-                    >
+                  section.pricingSectionItems.map((item, itemIndex) => {
+                    // Определяем направление анимации: четные секции - слева, нечетные - справа
+                    const direction = sectionIndex % 2 === 0 ? -50 : 50;
+                    return (
+                      <motion.div
+                        key={itemIndex}
+                        initial={{ x: direction, opacity: 0 }}
+                        whileInView={{ x: 0, opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{
+                          duration: 0.5,
+                          ease: "easeOut",
+                          delay: itemIndex * 0.1,
+                        }}
+                        className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow"
+                        data-tina-field={tinaField(item)}
+                      >
                       {/* Название/Описание */}
                       {item?.pricingItemTitle && (
                         <h3
@@ -102,8 +118,9 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
                           {item.pricingItemButtonText}
                         </button>
                       )}
-                    </div>
-                  ))}
+                      </motion.div>
+                    );
+                  })}
               </div>
             </div>
           </Section>

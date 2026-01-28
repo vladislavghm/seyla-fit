@@ -6,6 +6,7 @@ import type { PageBlocksAbout } from "@/tina/__generated__/types";
 import { tinaField } from "tinacms/dist/react";
 import { Section, sectionBlockSchemaField } from "@/components/layout/section";
 import Image from "next/image";
+import { motion } from "motion/react";
 
 export const About = ({ data }: { data: PageBlocksAbout }) => {
   return (
@@ -15,26 +16,38 @@ export const About = ({ data }: { data: PageBlocksAbout }) => {
           {/* Текстовая часть слева */}
           <div className="space-y-6">
             {data.aboutTitle && (
-              <h2
+              <motion.h2
+                initial={{ x: -50, opacity: 0 }}
+                whileInView={{ x: 0, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
                 data-tina-field={tinaField(data, "aboutTitle")}
                 className="text-4xl font-bold lg:text-5xl"
               >
                 {data.aboutTitle}
-              </h2>
+              </motion.h2>
             )}
             {data.aboutBody && (
-              <div
+              <motion.div
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
                 data-tina-field={tinaField(data, "aboutBody")}
                 className="prose prose-lg max-w-none"
               >
                 <TinaMarkdown content={data.aboutBody} />
-              </div>
+              </motion.div>
             )}
           </div>
 
           {/* Изображение справа */}
           {data.aboutImage && (
-            <div
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.3 }}
               data-tina-field={tinaField(data, "aboutImage")}
               className="relative aspect-4/3 overflow-hidden rounded-lg"
             >
@@ -45,7 +58,7 @@ export const About = ({ data }: { data: PageBlocksAbout }) => {
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
               />
-            </div>
+            </motion.div>
           )}
         </div>
       </div>
