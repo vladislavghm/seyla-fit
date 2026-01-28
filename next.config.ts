@@ -1,13 +1,12 @@
 import type { NextConfig } from 'next'
- 
+
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'assets.tina.io',
-        port: '',
-        pathname: '/**',
+        port: '', pathname: '/**',
       },
       {
         protocol: 'https',
@@ -19,7 +18,7 @@ const nextConfig: NextConfig = {
     // Разрешаем неоптимизированные изображения для внешних источников
     unoptimized: false,
   },
-  async headers() {
+  async headers () {
     // these are also defined in the root layout since github pages doesn't support headers
     const headers = [
       {
@@ -38,7 +37,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  async rewrites() {
+  async rewrites () {
     return [
       {
         source: '/admin',
