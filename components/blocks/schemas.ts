@@ -4,6 +4,7 @@ export { marqueeBlockSchema } from './marquee';
 export { contentBlockSchema } from './content';
 export { aboutBlockSchema } from './about';
 export { advantagesBlockSchema } from './advantages';
+export { trainingsBlockSchema } from './trainings';
 export { pricingBlockSchema } from './pricing';
 export { faqBlockSchema } from './faq';
 export { trialBlockSchema } from './trial';

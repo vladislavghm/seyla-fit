@@ -5,6 +5,7 @@ import { Marquee } from "./marquee";
 import { Content } from "./content";
 import { About } from "./about";
 import { Advantages } from "./advantages";
+import { Trainings } from "./trainings";
 import { Pricing } from "./pricing";
 import { Faq } from "./faq";
 import { Trial } from "./trial";
@@ -37,6 +38,8 @@ const Block = (block: PageBlocks) => {
       return <About data={block} />;
     case "PageBlocksAdvantages":
       return <Advantages data={block} />;
+    case "PageBlocksTrainings":
+      return <Trainings data={block} />;
     case "PageBlocksPricing":
       return <Pricing data={block} />;
     case "PageBlocksFaq":
