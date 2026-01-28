@@ -44,7 +44,7 @@ export const Trainings = ({ data }: { data: PageBlocksTrainings }) => {
           </div>
 
           {/* Основной заголовок */}
-          <div className="relative z-10">
+          <div className="relative z-10 text-center">
             {data.trainingsTitle && (
               <h2
                 data-tina-field={tinaField(data, "trainingsTitle")}
@@ -108,13 +108,27 @@ export const Trainings = ({ data }: { data: PageBlocksTrainings }) => {
                         {/* Изображение или цветной фон */}
                         <div className="relative w-full h-48 lg:h-56 overflow-hidden">
                           {training.trainingImage ? (
-                            <Image
-                              src={training.trainingImage}
-                              alt={training.trainingTitle || "Тренировка"}
-                              fill
-                              className="object-cover"
-                              data-tina-field={tinaField(training, "trainingImage")}
-                            />
+                            training.trainingImage.startsWith("http") ? (
+                              // Для внешних URL используем unoptimized
+                              <Image
+                                src={training.trainingImage}
+                                alt={training.trainingTitle || "Тренировка"}
+                                fill
+                                className="object-cover"
+                                unoptimized
+                                data-tina-field={tinaField(training, "trainingImage")}
+                              />
+                            ) : (
+                              // Для локальных изображений используем оптимизацию
+                              <Image
+                                src={training.trainingImage}
+                                alt={training.trainingTitle || "Тренировка"}
+                                fill
+                                className="object-cover"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 33vw, 25vw"
+                                data-tina-field={tinaField(training, "trainingImage")}
+                              />
+                            )
                           ) : (
                             <div
                               className="w-full h-full"

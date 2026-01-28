@@ -7,13 +7,17 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'assets.tina.io',
         port: '',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
         port: '',
+        pathname: '/**',
       }
     ],
+    // Разрешаем неоптимизированные изображения для внешних источников
+    unoptimized: false,
   },
   async headers() {
     // these are also defined in the root layout since github pages doesn't support headers
