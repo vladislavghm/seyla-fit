@@ -87,7 +87,13 @@ export const Hero = ({ data }: { data: PageBlocksHero }) => {
               size="lg"
               className={`${buttonClass} rounded-none px-8 py-4 text-lg font-semibold`}
             >
-              <Link href={heroData.buttonLink || "#"}>
+              <Link
+                href={
+                  heroData.buttonLink && heroData.buttonLink !== "#"
+                    ? heroData.buttonLink
+                    : "#trial"
+                }
+              >
                 {heroData.buttonLabel}
               </Link>
             </Button>
@@ -122,7 +128,7 @@ export const Hero = ({ data }: { data: PageBlocksHero }) => {
                 >
                   {benefit.text}
                 </motion.div>
-              )
+              ),
           )}
 
           {/* Мобильная версия: в списке */}
@@ -147,7 +153,7 @@ export const Hero = ({ data }: { data: PageBlocksHero }) => {
                     >
                       {benefit.text}
                     </motion.div>
-                  )
+                  ),
               )}
             </div>
           </div>
@@ -166,7 +172,7 @@ export const heroBlockSchema: Template = {
       headline: "Шпагат - это просто",
       description: "Занимайся в центре города в уютной и светлой студии.",
       buttonLabel: "Записаться",
-      buttonLink: "#",
+      buttonLink: "#trial",
     },
   },
   fields: [

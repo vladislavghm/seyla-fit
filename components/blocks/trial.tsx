@@ -64,7 +64,8 @@ export const Trial = ({ data }: { data: PageBlocksTrial }) => {
 
   return (
     <div
-      className="relative py-16 lg:py-24 min-h-[600px]"
+      id="trial"
+      className="relative py-16 lg:py-24 min-h-[600px] scroll-mt-20"
       style={backgroundStyle}
     >
       {/* Оверлей с настраиваемой прозрачностью */}
