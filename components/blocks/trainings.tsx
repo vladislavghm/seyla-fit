@@ -283,13 +283,15 @@ export const trainingsBlockSchema: Template = {
           trainingTitle: "STRETCH",
           trainingDescription:
             "если хочешь улучшить гибкость, снять напряжение в мышцах и улучшить подвижность суставов - эта тренировка для тебя!",
-          trainingImage: "/uploads/trainings/stretch.jpg",
+          trainingImage: "",
+          cardColor: "#e0e7ff",
         },
         {
           trainingTitle: "ЗДОРОВАЯ СПИНА",
           trainingDescription:
             "тренировка, особенно полезная для тех, кто много времени проводит за сидячей работой. поможет снять зажимы и боли в спине, укрепить мышечный корсет и улучшить осанку",
-          trainingImage: "/uploads/trainings/healthy-back.jpg",
+          trainingImage: "",
+          cardColor: "#d1fae5",
         },
       ],
     },
