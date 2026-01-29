@@ -24,6 +24,13 @@ const Global: Collection = {
       description: "Отображается во вкладке браузера",
     },
     {
+      type: "boolean",
+      label: "Заглушка «Скоро открытие» на главной",
+      name: "showComingSoonStub",
+      description:
+        "Вкл — на / показывается заглушка, полный сайт по /home и /?home. Выкл — обычная главная на /.",
+    },
+    {
       type: "object",
       label: "Тема",
       name: "theme",

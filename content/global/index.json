@@ -1,5 +1,6 @@
 {
   "title": "Seyla Fit",
+  "showComingSoonStub": true,
   "theme": {
     "color": "blue",
     "font": "sans",

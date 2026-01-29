@@ -12,6 +12,8 @@ interface LayoutState {
   footer: FooterQuery["footer"];
   pageData: {};
   setPageData: React.Dispatch<React.SetStateAction<{}>>;
+  /** Вкл — на / заглушка, логотип ведёт на /home */
+  showComingSoonStub?: boolean;
 }
 
 const LayoutContext = React.createContext<LayoutState | undefined>(undefined);
@@ -28,6 +30,7 @@ export const useLayout = () => {
       header: undefined,
       footer: undefined,
       pageData: undefined,
+      showComingSoonStub: false,
     }
   );
 };
@@ -38,6 +41,7 @@ interface LayoutProviderProps {
   header: HeaderQuery["header"];
   footer: FooterQuery["footer"];
   pageData: {};
+  showComingSoonStub?: boolean;
 }
 
 export const LayoutProvider: React.FC<LayoutProviderProps> = ({
@@ -46,6 +50,7 @@ export const LayoutProvider: React.FC<LayoutProviderProps> = ({
   header: initialHeader,
   footer: initialFooter,
   pageData: initialPageData,
+  showComingSoonStub = false,
 }) => {
   const [pageData, setPageData] = useState<{}>(initialPageData);
 
@@ -57,6 +62,7 @@ export const LayoutProvider: React.FC<LayoutProviderProps> = ({
         footer: initialFooter,
         pageData,
         setPageData,
+        showComingSoonStub,
       }}
     >
       {children}

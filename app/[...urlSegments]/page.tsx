@@ -31,6 +31,15 @@ export default async function Page({
     notFound();
   }
 
+  // Главная без Section — как на /, чтобы блоки (hero и т.д.) растягивались на всю ширину
+  if (filepath === "home") {
+    return (
+      <Layout rawPageData={data}>
+        <ClientPage {...data} />
+      </Layout>
+    );
+  }
+
   return (
     <Layout rawPageData={data}>
       <Section>
@@ -59,7 +68,7 @@ export async function generateStaticParams() {
       }
 
       allPages.data.pageConnection.edges.push(
-        ...pages.data.pageConnection.edges
+        ...pages.data.pageConnection.edges,
       );
     }
 
@@ -68,15 +77,16 @@ export async function generateStaticParams() {
         urlSegments: edge?.node?._sys.breadcrumbs || [],
       }))
       .filter((x) => x.urlSegments.length >= 1)
-      .filter((x) => !x.urlSegments.every((x) => x === "home")); // exclude the home page
+      .filter((x) => !x.urlSegments.every((x) => x === "home")); // home отдаётся по /home, на / — заглушка
 
+    params.push({ urlSegments: ["home"] });
     return params;
   } catch (error) {
     // Если TinaCMS недоступен при сборке, возвращаем пустой массив
     // Страницы будут генерироваться динамически
     console.warn(
       "TinaCMS недоступен при generateStaticParams, используем динамическую генерацию:",
-      error
+      error,
     );
     return [];
   }

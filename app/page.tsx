@@ -1,13 +1,38 @@
 import React from "react";
+import { headers } from "next/headers";
 import client from "@/tina/__generated__/client";
 import Layout from "@/components/layout/layout";
 import ClientPage from "@/components/blocks/client-page";
+import { ComingSoon } from "@/components/coming-soon";
 
-// Отключаем статическую генерацию - страница будет генерироваться динамически
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const params = await searchParams;
+  const referer = (await headers()).get("referer") ?? "";
+  const isFromAdmin = referer.includes("/admin");
+  const isPreview = params?.preview === "1";
+  const isHomeParam = params?.home !== undefined;
+
+  let showComingSoonOnRoot = false;
+  try {
+    const globalData = await client.queries.global({
+      relativePath: "index.json",
+    });
+    showComingSoonOnRoot = globalData.data.global.showComingSoonStub ?? false;
+  } catch {
+    // Tina недоступна — показываем обычную главную
+  }
+
+  if (showComingSoonOnRoot && !isFromAdmin && !isPreview && !isHomeParam) {
+    return <ComingSoon />;
+  }
+
   try {
     const data = await client.queries.page({
       relativePath: `home.mdx`,
@@ -22,7 +47,7 @@ export default async function Home() {
     // Если TinaCMS недоступен, возвращаем пустую страницу
     console.warn(
       "TinaCMS недоступен, используем пустую страницу:",
-      error instanceof Error ? error.message : error
+      error instanceof Error ? error.message : error,
     );
 
     const emptyData = {

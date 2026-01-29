@@ -13,8 +13,10 @@ export const Header = () => {
 
   if (!header) return null;
 
+  const { showComingSoonStub } = useLayout();
   const [menuState, setMenuState] = React.useState(false);
   const backgroundColor = header.backgroundColor || "#ebebeb";
+  const logoHref = showComingSoonStub ? "/home" : "/";
 
   return (
     <header>
@@ -27,7 +29,11 @@ export const Header = () => {
           <div className="relative flex items-center justify-between gap-6 py-4">
             {/* Logo */}
             <div className="shrink-0">
-              <Link href="/" aria-label="home" className="flex flex-col">
+              <Link
+                href={logoHref}
+                aria-label="Главная"
+                className="flex flex-col"
+              >
                 {header.logo && (
                   <Image
                     src={header.logo}

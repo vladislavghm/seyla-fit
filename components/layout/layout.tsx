@@ -28,6 +28,7 @@ export default async function Layout({ children, rawPageData }: LayoutProps) {
       header={headerData.data.header}
       footer={footerData.data.footer}
       pageData={rawPageData}
+      showComingSoonStub={globalData.data.global.showComingSoonStub ?? false}
     >
       <PageLoader />
       <Header />
