@@ -184,7 +184,6 @@ export const contactsBlockSchema: Template = {
       type: "string",
       label: "Заголовок",
       name: "contactsTitle",
-      default: "Контакты:",
     },
     {
       type: "string",

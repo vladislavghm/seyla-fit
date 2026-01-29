@@ -282,7 +282,6 @@ export const trialBlockSchema: Template = {
       ui: {
         component: "number",
       },
-      default: 30,
     },
     {
       type: "string",
@@ -299,7 +298,6 @@ export const trialBlockSchema: Template = {
       type: "string",
       label: "Заголовок формы",
       name: "trialFormTitle",
-      default: "Запишись на пробное занятие",
     },
     {
       type: "string",
@@ -313,31 +311,26 @@ export const trialBlockSchema: Template = {
       type: "string",
       label: "Подпись поля ФИО",
       name: "trialFormNameLabel",
-      default: "ФИО",
     },
     {
       type: "string",
       label: "Placeholder поля ФИО",
       name: "trialFormNamePlaceholder",
-      default: "Фамилия Имя Отчество",
     },
     {
       type: "string",
       label: "Подпись поля телефона",
       name: "trialFormPhoneLabel",
-      default: "Номер телефона",
     },
     {
       type: "string",
       label: "Placeholder поля телефона",
       name: "trialFormPhonePlaceholder",
-      default: "+7 (000) 000-00-00",
     },
     {
       type: "string",
       label: "Текст кнопки",
       name: "trialFormButtonText",
-      default: "Записаться",
     },
     {
       type: "string",
@@ -346,8 +339,6 @@ export const trialBlockSchema: Template = {
       ui: {
         component: "textarea",
       },
-      default:
-        "Отправляя данные, Вы соглашаетесь с политикой конфиденциальности.",
     },
   ],
 };

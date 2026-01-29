@@ -261,7 +261,6 @@ export const pricingBlockSchema: Template = {
               type: "string",
               label: "Текст кнопки",
               name: "pricingItemButtonText",
-              default: "Купить",
             },
             {
               type: "string",
