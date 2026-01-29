@@ -4,7 +4,7 @@ import Image from "next/image";
 import type { Template } from "tinacms";
 import type { PageBlocksTrainings } from "@/tina/__generated__/types";
 import { tinaField } from "tinacms/dist/react";
-import { Section, sectionBlockSchemaField } from "@/components/layout/section";
+import { Section } from "@/components/layout/section";
 import { motion } from "motion/react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
@@ -18,7 +18,8 @@ import "swiper/css/navigation";
 export const Trainings = ({ data }: { data: PageBlocksTrainings }) => {
   const trainings = data.trainingsItems || [];
   const headerColor = (data as any).headerColor || "#e06b6b";
-  const navigationButtonColor = (data as any).navigationButtonColor || "#160D80";
+  const navigationButtonColor =
+    (data as any).navigationButtonColor || "#160D80";
 
   return (
     <>
@@ -73,139 +74,163 @@ export const Trainings = ({ data }: { data: PageBlocksTrainings }) => {
         </div>
       </div>
 
-      <Section background={data.background!} className="py-16 lg:py-24">
+      <Section
+        backgroundColor={(data as any).backgroundColor}
+        className="py-16 lg:py-24"
+      >
         <div className="mx-auto max-w-7xl px-6">
-
-        {/* Карусель с тренировками */}
-        {trainings.length > 0 && (
-          <div className="relative">
-            <Swiper
-              modules={[Navigation]}
-              spaceBetween={24}
-              slidesPerView={1}
-              breakpoints={{
-                640: {
-                  slidesPerView: 2,
-                },
-                1024: {
-                  slidesPerView: 3,
-                },
-                1280: {
-                  slidesPerView: 4,
-                },
-              }}
-              navigation={{
-                prevEl: ".trainings-swiper-button-prev",
-                nextEl: ".trainings-swiper-button-next",
-              }}
-              className="trainings-swiper"
-              style={{ height: "auto" }}
-            >
-              {trainings
-                .filter((training): training is NonNullable<typeof training> => training !== null)
-                .map((training, index) => (
-                  <SwiperSlide key={index} style={{ height: "auto" }}>
-                    <div data-tina-field={tinaField(training)} className="h-full">
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5, delay: index * 0.1 }}
-                        className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden h-full flex flex-col"
+          {/* Карусель с тренировками */}
+          {trainings.length > 0 && (
+            <div className="relative">
+              <Swiper
+                modules={[Navigation]}
+                spaceBetween={24}
+                slidesPerView={1}
+                breakpoints={{
+                  640: {
+                    slidesPerView: 2,
+                  },
+                  1024: {
+                    slidesPerView: 3,
+                  },
+                  1280: {
+                    slidesPerView: 4,
+                  },
+                }}
+                navigation={{
+                  prevEl: ".trainings-swiper-button-prev",
+                  nextEl: ".trainings-swiper-button-next",
+                }}
+                className="trainings-swiper"
+                style={{ height: "auto" }}
+              >
+                {trainings
+                  .filter(
+                    (training): training is NonNullable<typeof training> =>
+                      training !== null,
+                  )
+                  .map((training, index) => (
+                    <SwiperSlide key={index} style={{ height: "auto" }}>
+                      <div
+                        data-tina-field={tinaField(training)}
+                        className="h-full"
                       >
-                        {/* Изображение или цветной фон */}
-                        <div className="relative w-full h-48 lg:h-56 overflow-hidden">
-                          {training.trainingImage ? (
-                            training.trainingImage.startsWith("http") ? (
-                              // Для внешних URL используем unoptimized
-                              <Image
-                                src={training.trainingImage}
-                                alt={training.trainingTitle || "Тренировка"}
-                                fill
-                                className="object-cover"
-                                unoptimized
-                                data-tina-field={tinaField(training, "trainingImage")}
-                              />
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.5, delay: index * 0.1 }}
+                          className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden h-full flex flex-col"
+                        >
+                          {/* Изображение или цветной фон */}
+                          <div className="relative w-full h-48 lg:h-56 overflow-hidden">
+                            {training.trainingImage ? (
+                              training.trainingImage.startsWith("http") ? (
+                                // Для внешних URL используем unoptimized
+                                <Image
+                                  src={training.trainingImage}
+                                  alt={training.trainingTitle || "Тренировка"}
+                                  fill
+                                  className="object-cover"
+                                  unoptimized
+                                  data-tina-field={tinaField(
+                                    training,
+                                    "trainingImage",
+                                  )}
+                                />
+                              ) : (
+                                // Для локальных изображений используем оптимизацию
+                                <Image
+                                  src={training.trainingImage}
+                                  alt={training.trainingTitle || "Тренировка"}
+                                  fill
+                                  className="object-cover"
+                                  sizes="(max-width: 768px) 100vw, (max-width: 1280px) 33vw, 25vw"
+                                  data-tina-field={tinaField(
+                                    training,
+                                    "trainingImage",
+                                  )}
+                                />
+                              )
                             ) : (
-                              // Для локальных изображений используем оптимизацию
-                              <Image
-                                src={training.trainingImage}
-                                alt={training.trainingTitle || "Тренировка"}
-                                fill
-                                className="object-cover"
-                                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 33vw, 25vw"
-                                data-tina-field={tinaField(training, "trainingImage")}
+                              <div
+                                className="w-full h-full"
+                                style={{
+                                  backgroundColor:
+                                    (training as any).cardColor || "#f3f4f6",
+                                }}
+                                data-tina-field={tinaField(
+                                  training as any,
+                                  "cardColor" as any,
+                                )}
                               />
-                            )
-                          ) : (
-                            <div
-                              className="w-full h-full"
-                              style={{
-                                backgroundColor: (training as any).cardColor || "#f3f4f6",
-                              }}
-                              data-tina-field={tinaField(training as any, "cardColor" as any)}
-                            />
-                          )}
-                        </div>
+                            )}
+                          </div>
 
-                        {/* Контент карточки */}
-                        <div className="p-6 flex-1 flex flex-col">
-                          {training.trainingTitle && (
-                            <h3
-                              data-tina-field={tinaField(training, "trainingTitle")}
-                              className="mb-3 text-xl lg:text-2xl font-bold text-gray-900"
-                            >
-                              {training.trainingTitle}
-                            </h3>
-                          )}
-                          {training.trainingDescription && (
-                            <p
-                              data-tina-field={tinaField(training, "trainingDescription")}
-                              className="text-gray-600 text-sm lg:text-base flex-1"
-                            >
-                              {training.trainingDescription}
-                            </p>
-                          )}
-                        </div>
-                      </motion.div>
-                    </div>
-                  </SwiperSlide>
-                ))}
-            </Swiper>
+                          {/* Контент карточки */}
+                          <div className="p-6 flex-1 flex flex-col">
+                            {training.trainingTitle && (
+                              <h3
+                                data-tina-field={tinaField(
+                                  training,
+                                  "trainingTitle",
+                                )}
+                                className="mb-3 text-xl lg:text-2xl font-bold text-gray-900"
+                              >
+                                {training.trainingTitle}
+                              </h3>
+                            )}
+                            {training.trainingDescription && (
+                              <p
+                                data-tina-field={tinaField(
+                                  training,
+                                  "trainingDescription",
+                                )}
+                                className="text-gray-600 text-sm lg:text-base flex-1"
+                              >
+                                {training.trainingDescription}
+                              </p>
+                            )}
+                          </div>
+                        </motion.div>
+                      </div>
+                    </SwiperSlide>
+                  ))}
+              </Swiper>
 
-            {/* Кнопки навигации */}
-            <button
-              className="trainings-swiper-button-prev absolute left-0 top-1/2 z-20 -translate-y-1/2 -translate-x-4 rounded-full p-3 text-white shadow-lg transition-all hover:scale-110 lg:-translate-x-6 disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{
-                backgroundColor: navigationButtonColor,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.opacity = "0.9";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.opacity = "1";
-              }}
-              aria-label="Предыдущая тренировка"
-            >
-              <ChevronLeft className="h-6 w-6" />
-            </button>
-            <button
-              className="trainings-swiper-button-next absolute right-0 top-1/2 z-20 -translate-y-1/2 translate-x-4 rounded-full p-3 text-white shadow-lg transition-all hover:scale-110 lg:translate-x-6 disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{
-                backgroundColor: navigationButtonColor,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.opacity = "0.9";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.opacity = "1";
-              }}
-              aria-label="Следующая тренировка"
-            >
-              <ChevronRight className="h-6 w-6" />
-            </button>
-          </div>
-        )}
+              {/* Кнопки навигации */}
+              <button
+                className="trainings-swiper-button-prev absolute left-0 top-1/2 z-20 -translate-y-1/2 -translate-x-4 rounded-full p-3 text-white shadow-lg transition-all hover:scale-110 lg:-translate-x-6 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  backgroundColor: navigationButtonColor,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.opacity = "0.9";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.opacity = "1";
+                }}
+                aria-label="Предыдущая тренировка"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+              <button
+                className="trainings-swiper-button-next absolute right-0 top-1/2 z-20 -translate-y-1/2 translate-x-4 rounded-full p-3 text-white shadow-lg transition-all hover:scale-110 lg:translate-x-6 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  backgroundColor: navigationButtonColor,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.opacity = "0.9";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.opacity = "1";
+                }}
+                aria-label="Следующая тренировка"
+              >
+                <ChevronRight className="h-6 w-6" />
+              </button>
+            </div>
+          )}
         </div>
 
         <style jsx global>{`
@@ -270,7 +295,17 @@ export const trainingsBlockSchema: Template = {
     },
   },
   fields: [
-    sectionBlockSchemaField as any,
+    {
+      type: "string",
+      label: "Цвет фона",
+      name: "backgroundColor",
+      description:
+        "Цвет фона секции с карточками (как в блоке «Бегущая строка»)",
+      ui: {
+        // @ts-ignore
+        component: ColorPickerInput,
+      },
+    },
     {
       type: "string",
       label: "Заголовок",
@@ -296,7 +331,8 @@ export const trainingsBlockSchema: Template = {
       type: "string",
       label: "Цвет кнопок навигации",
       name: "navigationButtonColor",
-      description: "Цвет кнопок навигации слайдера (по умолчанию основной цвет сайта)",
+      description:
+        "Цвет кнопок навигации слайдера (по умолчанию основной цвет сайта)",
       ui: {
         // @ts-ignore
         component: ColorPickerInput,
@@ -347,7 +383,8 @@ export const trainingsBlockSchema: Template = {
           type: "string",
           label: "Цвет фона карточки",
           name: "cardColor",
-          description: "Используется, если не указано изображение (по умолчанию серый)",
+          description:
+            "Используется, если не указано изображение (по умолчанию серый)",
           ui: {
             // @ts-ignore
             component: ColorPickerInput,

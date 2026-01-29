@@ -4,12 +4,13 @@ import type { Template } from "tinacms";
 import { TinaMarkdown } from "tinacms/dist/rich-text";
 import type { PageBlocksFaq } from "@/tina/__generated__/types";
 import { tinaField } from "tinacms/dist/react";
-import { Section, sectionBlockSchemaField } from "@/components/layout/section";
+import { Section } from "@/components/layout/section";
+import { ColorPickerInput } from "@/tina/fields/colorPicker";
 import { motion, AnimatePresence } from "motion/react";
 
 export const Faq = ({ data }: { data: PageBlocksFaq }) => {
   const [openIndex, setOpenIndex] = useState<number | null>(
-    data.faqDefaultOpen !== undefined ? data.faqDefaultOpen : null
+    data.faqDefaultOpen !== undefined ? data.faqDefaultOpen : null,
   );
 
   const toggleItem = (index: number) => {
@@ -17,7 +18,10 @@ export const Faq = ({ data }: { data: PageBlocksFaq }) => {
   };
 
   return (
-    <Section background={data.background!} className="py-16 lg:py-24">
+    <Section
+      backgroundColor={(data as any).backgroundColor}
+      className="py-16 lg:py-24"
+    >
       <div className="mx-auto max-w-4xl px-6">
         {data.faqTitle && (
           <motion.h2
@@ -118,7 +122,16 @@ export const faqBlockSchema: Template = {
     },
   },
   fields: [
-    sectionBlockSchemaField as any,
+    {
+      type: "string",
+      label: "Цвет фона",
+      name: "backgroundColor",
+      description: "Цвет фона секции (как в блоке «Бегущая строка»)",
+      ui: {
+        // @ts-ignore
+        component: ColorPickerInput,
+      },
+    },
     {
       type: "string",
       label: "Заголовок",

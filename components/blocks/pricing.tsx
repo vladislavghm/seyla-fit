@@ -4,7 +4,8 @@ import type { Template } from "tinacms";
 import { TinaMarkdown } from "tinacms/dist/rich-text";
 import type { PageBlocksPricing } from "@/tina/__generated__/types";
 import { tinaField } from "tinacms/dist/react";
-import { Section, sectionBlockSchemaField } from "@/components/layout/section";
+import { Section } from "@/components/layout/section";
+import { ColorPickerInput } from "@/tina/fields/colorPicker";
 import { motion } from "motion/react";
 
 export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
@@ -14,7 +15,10 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
         data.pricingSections.map((section, sectionIndex) => (
           <Section
             key={sectionIndex}
-            background={(section as any)?.background || data.background!}
+            backgroundColor={
+              (section as any)?.backgroundColor ??
+              (data as any)?.backgroundColor
+            }
             className="py-16 lg:py-24"
             id={sectionIndex === 0 ? "tickets" : undefined}
             data-tina-field={tinaField(section)}
@@ -54,70 +58,74 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
                         className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow"
                         data-tina-field={tinaField(item)}
                       >
-                      {/* Название/Описание */}
-                      {item?.pricingItemTitle && (
-                        <h3
-                          data-tina-field={tinaField(item, "pricingItemTitle")}
-                          className="mb-2 text-lg font-semibold"
-                        >
-                          {item.pricingItemTitle}
-                        </h3>
-                      )}
-                      {item?.pricingItemSubtitle && (
-                        <p
-                          data-tina-field={tinaField(
-                            item,
-                            "pricingItemSubtitle"
-                          )}
-                          className="mb-4 text-sm text-gray-600"
-                        >
-                          {item.pricingItemSubtitle}
-                        </p>
-                      )}
-
-                      {/* Цены */}
-                      <div className="mb-6">
-                        {item?.pricingItemOldPrice && (
-                          <div
+                        {/* Название/Описание */}
+                        {item?.pricingItemTitle && (
+                          <h3
                             data-tina-field={tinaField(
                               item,
-                              "pricingItemOldPrice"
+                              "pricingItemTitle",
                             )}
-                            className="text-sm text-gray-400 line-through"
+                            className="mb-2 text-lg font-semibold"
                           >
-                            {item.pricingItemOldPrice}
-                          </div>
+                            {item.pricingItemTitle}
+                          </h3>
                         )}
-                        {item?.pricingItemPrice && (
-                          <div
+                        {item?.pricingItemSubtitle && (
+                          <p
                             data-tina-field={tinaField(
                               item,
-                              "pricingItemPrice"
+                              "pricingItemSubtitle",
                             )}
-                            className="text-3xl font-bold"
+                            className="mb-4 text-sm text-gray-600"
                           >
-                            {item.pricingItemPrice}
-                          </div>
+                            {item.pricingItemSubtitle}
+                          </p>
                         )}
-                      </div>
 
-                      {/* Кнопка */}
-                      {item?.pricingItemButtonText && (
-                        <button
-                          data-tina-field={tinaField(
-                            item,
-                            "pricingItemButtonText"
+                        {/* Цены */}
+                        <div className="mb-6">
+                          {item?.pricingItemOldPrice && (
+                            <div
+                              data-tina-field={tinaField(
+                                item,
+                                "pricingItemOldPrice",
+                              )}
+                              className="text-sm text-gray-400 line-through"
+                            >
+                              {item.pricingItemOldPrice}
+                            </div>
                           )}
-                          className="w-full bg-gray-800 text-white py-3 px-6 rounded-md font-medium hover:bg-gray-900 transition-colors"
-                          onClick={() => {
-                            if (item?.pricingItemButtonLink) {
-                              window.location.href = item.pricingItemButtonLink;
-                            }
-                          }}
-                        >
-                          {item.pricingItemButtonText}
-                        </button>
-                      )}
+                          {item?.pricingItemPrice && (
+                            <div
+                              data-tina-field={tinaField(
+                                item,
+                                "pricingItemPrice",
+                              )}
+                              className="text-3xl font-bold"
+                            >
+                              {item.pricingItemPrice}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Кнопка */}
+                        {item?.pricingItemButtonText && (
+                          <button
+                            data-tina-field={tinaField(
+                              item,
+                              "pricingItemButtonText",
+                            )}
+                            className="w-full bg-gray-800 text-white py-3 px-6 rounded-md font-medium hover:bg-gray-900 transition-colors"
+                            onClick={() => {
+                              if (item?.pricingItemButtonLink) {
+                                window.location.href =
+                                  item.pricingItemButtonLink;
+                              }
+                            }}
+                          >
+                            {item.pricingItemButtonText}
+                          </button>
+                        )}
                       </motion.div>
                     );
                   })}
@@ -152,7 +160,17 @@ export const pricingBlockSchema: Template = {
     },
   },
   fields: [
-    sectionBlockSchemaField as any,
+    {
+      type: "string",
+      label: "Цвет фона",
+      name: "backgroundColor",
+      description:
+        "Цвет фона блока (как в блоке «Бегущая строка»). Можно переопределить для каждой секции ниже.",
+      ui: {
+        // @ts-ignore
+        component: ColorPickerInput,
+      },
+    },
     {
       type: "object",
       label: "Секции с тарифами",
@@ -177,7 +195,17 @@ export const pricingBlockSchema: Template = {
         },
       },
       fields: [
-        sectionBlockSchemaField as any,
+        {
+          type: "string",
+          label: "Цвет фона секции",
+          name: "backgroundColor",
+          description:
+            "Цвет фона этой секции (как в блоке «Бегущая строка»). Если не задан — используется общий цвет блока.",
+          ui: {
+            // @ts-ignore
+            component: ColorPickerInput,
+          },
+        },
         {
           type: "string",
           label: "Заголовок секции",

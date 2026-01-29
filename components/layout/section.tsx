@@ -1,14 +1,28 @@
-import React, { ReactNode } from 'react';
-import { cn } from '../../lib/utils';
+import React, { ReactNode } from "react";
+import { cn } from "../../lib/utils";
 
 interface SectionProps extends React.HTMLProps<HTMLElement> {
+  /** Класс фона (Tailwind), например bg-gray-50/80 */
   background?: string;
+  /** Цвет фона (hex), как в блоке «Бегущая строка». Имеет приоритет над background */
+  backgroundColor?: string;
   children: ReactNode;
 }
 
-export const Section: React.FC<SectionProps> = ({ className, children, background, ...props }) => {
+export const Section: React.FC<SectionProps> = ({
+  className,
+  children,
+  background,
+  backgroundColor,
+  ...props
+}) => {
+  const wrapperClassName = backgroundColor
+    ? undefined
+    : background || "bg-default";
+  const wrapperStyle = backgroundColor ? { backgroundColor } : undefined;
+
   return (
-    <div className={background || "bg-default"}>
+    <div className={wrapperClassName} style={wrapperStyle}>
       <section
         className={cn("py-12 mx-auto max-w-7xl px-6", className)}
         {...props}

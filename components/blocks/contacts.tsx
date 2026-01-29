@@ -3,7 +3,8 @@ import React from "react";
 import type { Template } from "tinacms";
 import type { PageBlocksContacts } from "@/tina/__generated__/types";
 import { tinaField } from "tinacms/dist/react";
-import { Section, sectionBlockSchemaField } from "@/components/layout/section";
+import { Section } from "@/components/layout/section";
+import { ColorPickerInput } from "@/tina/fields/colorPicker";
 import { Icon } from "@/components/icon";
 import { normalizeIconData } from "@/lib/icon-utils";
 import { iconSchema } from "@/tina/fields/icon";
@@ -12,7 +13,7 @@ import { motion } from "motion/react";
 export const Contacts = ({ data }: { data: PageBlocksContacts }) => {
   return (
     <Section
-      background={data.background!}
+      backgroundColor={(data as any).backgroundColor}
       className="py-16 lg:py-24"
       id="contacts"
     >
@@ -83,7 +84,7 @@ export const Contacts = ({ data }: { data: PageBlocksContacts }) => {
                   }
                   const iconData = normalizeIconData(
                     social.contactsSocialIcon,
-                    "small"
+                    "small",
                   );
                   if (!iconData) return null;
 
@@ -169,7 +170,16 @@ export const contactsBlockSchema: Template = {
     },
   },
   fields: [
-    sectionBlockSchemaField as any,
+    {
+      type: "string",
+      label: "Цвет фона",
+      name: "backgroundColor",
+      description: "Цвет фона секции (как в блоке «Бегущая строка»)",
+      ui: {
+        // @ts-ignore
+        component: ColorPickerInput,
+      },
+    },
     {
       type: "string",
       label: "Заголовок",

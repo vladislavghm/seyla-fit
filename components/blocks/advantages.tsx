@@ -4,12 +4,16 @@ import type { Template } from "tinacms";
 import { TinaMarkdown } from "tinacms/dist/rich-text";
 import type { PageBlocksAdvantages } from "@/tina/__generated__/types";
 import { tinaField } from "tinacms/dist/react";
-import { Section, sectionBlockSchemaField } from "@/components/layout/section";
+import { Section } from "@/components/layout/section";
+import { ColorPickerInput } from "@/tina/fields/colorPicker";
 import { motion } from "motion/react";
 
 export const Advantages = ({ data }: { data: PageBlocksAdvantages }) => {
   return (
-    <Section background={data.background!} className="py-16 lg:py-24">
+    <Section
+      backgroundColor={(data as any).backgroundColor}
+      className="py-16 lg:py-24"
+    >
       <div className="mx-auto max-w-5xl px-6">
         {data.advantagesTitle && (
           <motion.h2
@@ -58,7 +62,7 @@ export const Advantages = ({ data }: { data: PageBlocksAdvantages }) => {
                       <div
                         data-tina-field={tinaField(
                           item,
-                          "advantagesItemDescription"
+                          "advantagesItemDescription",
                         )}
                         className="prose prose-lg max-w-none"
                       >
@@ -104,7 +108,16 @@ export const advantagesBlockSchema: Template = {
     },
   },
   fields: [
-    sectionBlockSchemaField as any,
+    {
+      type: "string",
+      label: "Цвет фона",
+      name: "backgroundColor",
+      description: "Цвет фона секции (как в блоке «Бегущая строка»)",
+      ui: {
+        // @ts-ignore
+        component: ColorPickerInput,
+      },
+    },
     {
       type: "string",
       label: "Заголовок",

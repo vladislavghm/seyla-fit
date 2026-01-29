@@ -4,7 +4,7 @@ import type { Template } from "tinacms";
 import { TinaMarkdown } from "tinacms/dist/rich-text";
 import type { PageBlocksTrial } from "@/tina/__generated__/types";
 import { tinaField } from "tinacms/dist/react";
-import { sectionBlockSchemaField } from "@/components/layout/section";
+import { ColorPickerInput } from "@/tina/fields/colorPicker";
 import { motion } from "motion/react";
 
 export const Trial = ({ data }: { data: PageBlocksTrial }) => {
@@ -80,7 +80,9 @@ export const Trial = ({ data }: { data: PageBlocksTrial }) => {
       {!data.trialBackgroundImage && (
         <div
           className="absolute inset-0"
-          style={{ backgroundColor: data.background || "transparent" }}
+          style={{
+            backgroundColor: (data as any).backgroundColor || "transparent",
+          }}
         />
       )}
 
@@ -252,7 +254,17 @@ export const trialBlockSchema: Template = {
     },
   },
   fields: [
-    sectionBlockSchemaField as any,
+    {
+      type: "string",
+      label: "Цвет фона",
+      name: "backgroundColor",
+      description:
+        "Цвет фона секции (как в блоке «Бегущая строка»). Используется, если не задано фоновое изображение.",
+      ui: {
+        // @ts-ignore
+        component: ColorPickerInput,
+      },
+    },
     {
       type: "image",
       label: "Фоновое изображение",
