@@ -7,17 +7,38 @@ import { tinaField } from "tinacms/dist/react";
 import { ColorPickerInput } from "@/tina/fields/colorPicker";
 import { motion } from "motion/react";
 
+type SubmitStatus = "idle" | "loading" | "success" | "error";
+
 export const Trial = ({ data }: { data: PageBlocksTrial }) => {
   const [formData, setFormData] = useState({
     fullName: "",
     phone: "",
   });
+  const [submitStatus, setSubmitStatus] = useState<SubmitStatus>("idle");
+  const [submitError, setSubmitError] = useState<string>("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Здесь можно добавить логику отправки формы
-    console.log("Form submitted:", formData);
-    // Можно добавить отправку на сервер или интеграцию с внешним сервисом
+    setSubmitError("");
+    setSubmitStatus("loading");
+    try {
+      const res = await fetch("/api/trial", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setSubmitStatus("error");
+        setSubmitError(json.error || "Не удалось отправить заявку");
+        return;
+      }
+      setSubmitStatus("success");
+      setFormData({ fullName: "", phone: "" });
+    } catch {
+      setSubmitStatus("error");
+      setSubmitError("Ошибка сети. Попробуйте позже.");
+    }
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -205,13 +226,28 @@ export const Trial = ({ data }: { data: PageBlocksTrial }) => {
                 </div>
               </div>
 
+              {/* Сообщение об успехе / ошибке */}
+              {submitStatus === "success" && (
+                <p className="text-green-600 text-sm font-medium">
+                  Заявка отправлена! Мы свяжемся с вами в ближайшее время.
+                </p>
+              )}
+              {submitStatus === "error" && submitError && (
+                <p className="text-red-600 text-sm font-medium">
+                  {submitError}
+                </p>
+              )}
+
               {/* Кнопка отправки */}
               <button
                 type="submit"
-                className="w-full bg-gray-800 text-white py-3 px-6 rounded-md font-medium hover:bg-gray-900 transition-colors"
+                disabled={submitStatus === "loading"}
+                className="w-full bg-gray-800 text-white py-3 px-6 rounded-md font-medium hover:bg-gray-900 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                 data-tina-field={tinaField(data, "trialFormButtonText")}
               >
-                {data.trialFormButtonText || "Записаться"}
+                {submitStatus === "loading"
+                  ? "Отправка..."
+                  : data.trialFormButtonText || "Записаться"}
               </button>
 
               {/* Текст о политике конфиденциальности */}
