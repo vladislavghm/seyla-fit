@@ -10,7 +10,6 @@ import Image from "next/image";
 import { motion } from "motion/react";
 
 export const About = ({ data }: { data: PageBlocksAbout }) => {
-  const isCenter = (data as { aboutLayout?: string })?.aboutLayout === "center";
   const headerColor = (data as any).headerColor || "#e06b6b";
 
   return (
@@ -67,16 +66,10 @@ export const About = ({ data }: { data: PageBlocksAbout }) => {
         backgroundColor={(data as any).backgroundColor}
         className="py-16 lg:py-24"
       >
-      <div className="mx-auto max-w-7xl px-6">
-        <div
-          className={
-            isCenter
-              ? "flex flex-col gap-12 items-center text-center max-w-3xl mx-auto"
-              : "grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16"
-          }
-        >
-          {/* Текстовая часть */}
-          <div className={isCenter ? "space-y-6 w-full" : "space-y-6 text-center"}>
+      <div className="mx-auto max-w-7xl px-6 flex justify-center">
+        <div className="flex flex-col gap-12 items-center text-center w-full max-w-2xl">
+          {/* Текстовая часть — по центру экрана */}
+          <div className="space-y-6 w-full flex flex-col items-center">
             {data.aboutBody && (
               <motion.div
                 initial={{ opacity: 0 }}
@@ -84,7 +77,7 @@ export const About = ({ data }: { data: PageBlocksAbout }) => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
                 data-tina-field={tinaField(data, "aboutBody")}
-                className="prose prose-lg max-w-none mx-auto text-center"
+                className="prose prose-lg max-w-none text-center w-full"
               >
                 <TinaMarkdown content={data.aboutBody} />
               </motion.div>
@@ -99,11 +92,7 @@ export const About = ({ data }: { data: PageBlocksAbout }) => {
               viewport={{ once: true }}
               transition={{ duration: 0.6, ease: "easeOut", delay: 0.3 }}
               data-tina-field={tinaField(data, "aboutImage")}
-              className={
-                isCenter
-                  ? "relative aspect-4/3 overflow-hidden rounded-lg w-full max-w-2xl"
-                  : "relative aspect-4/3 overflow-hidden rounded-lg"
-              }
+              className="relative aspect-4/3 overflow-hidden rounded-lg w-full max-w-xl shrink-0"
             >
               <Image
                 src={data.aboutImage}
