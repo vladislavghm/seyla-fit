@@ -74,13 +74,15 @@ export const Header = () => {
                   {header.social.map((social, index) => {
                     const iconData = normalizeIconData(social?.icon, "small");
                     if (!iconData || !social?.url) return null;
+                    const iconColor = (social?.icon as { color?: string })?.color;
                     return (
                       <Link
                         key={index}
                         href={social.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-foreground hover:opacity-70 transition-opacity"
+                        className="hover:opacity-70 transition-opacity"
+                        style={iconColor ? { color: iconColor } : undefined}
                         aria-label={iconData.name || "Social link"}
                       >
                         <Icon data={iconData} className="w-[30px] h-[30px]" />

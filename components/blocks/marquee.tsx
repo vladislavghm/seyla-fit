@@ -7,6 +7,8 @@ import { ColorPickerInput } from "@/tina/fields/colorPicker";
 
 export const Marquee = ({ data }: { data: PageBlocksMarquee }) => {
   const marqueeData = data as any;
+  if (marqueeData?.enabled === false) return null;
+
   const text = marqueeData?.text || "Ты — не тяни время — тяни шпагаты";
   const backgroundColor = marqueeData?.backgroundColor || "#f3f4f6";
   const textColor = marqueeData?.textColor || "#4b5563";
@@ -49,9 +51,19 @@ export const marqueeBlockSchema: Template = {
     previewSrc: "/blocks/marquee.png",
     defaultItem: {
       text: "Ты — не тяни время — тяни шпагаты",
+      enabled: true,
     },
   },
   fields: [
+    {
+      type: "boolean",
+      label: "Показать бегущую строку",
+      name: "enabled",
+      description: "Включить или выключить раздел",
+      ui: {
+        component: "toggle",
+      },
+    },
     {
       type: "string",
       label: "Текст",

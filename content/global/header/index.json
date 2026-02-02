@@ -24,7 +24,7 @@
     {
       "icon": {
         "name": "BiLogoTelegram",
-        "color": "orange",
+        "color": "#ff0000",
         "style": "regular"
       },
       "url": "https://t.me/seylafit"

@@ -24,8 +24,13 @@ export const Hero = ({ data }: { data: PageBlocksHero }) => {
       backgroundColor?.toLowerCase().includes("white"));
 
   const textColorClass = isLightBackground ? "text-gray-900" : "text-white";
-  const buttonClass =
-    "bg-white text-gray-900 border-2 border-white hover:bg-gray-800 hover:text-white hover:border-white transition-all duration-300";
+  const buttonBg = heroData?.buttonColor || "#ffffff";
+  const buttonText = heroData?.buttonTextColor || "#111827";
+  const buttonStyle: React.CSSProperties = {
+    backgroundColor: buttonBg,
+    color: buttonText,
+    borderColor: buttonBg,
+  };
 
   // Стили для фона
   const backgroundStyle: React.CSSProperties = {
@@ -85,7 +90,8 @@ export const Hero = ({ data }: { data: PageBlocksHero }) => {
             <Button
               asChild
               size="lg"
-              className={`${buttonClass} rounded-none px-8 py-4 text-lg font-semibold`}
+              className="rounded-none px-8 py-4 text-lg font-semibold border-2 transition-all duration-300 hover:opacity-90"
+              style={buttonStyle}
             >
               <Link
                 href={
@@ -199,6 +205,26 @@ export const heroBlockSchema: Template = {
       type: "string",
       label: "Ссылка кнопки",
       name: "buttonLink",
+    },
+    {
+      type: "string",
+      label: "Цвет кнопки",
+      name: "buttonColor",
+      description: "Фон и рамка кнопки (по умолчанию белый)",
+      ui: {
+        // @ts-ignore
+        component: ColorPickerInput,
+      },
+    },
+    {
+      type: "string",
+      label: "Цвет текста кнопки",
+      name: "buttonTextColor",
+      description: "Цвет надписи на кнопке (по умолчанию тёмный)",
+      ui: {
+        // @ts-ignore
+        component: ColorPickerInput,
+      },
     },
     {
       type: "image",

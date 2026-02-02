@@ -51,7 +51,15 @@ export const Faq = ({ data }: { data: PageBlocksFaq }) => {
                     ease: "easeOut",
                     delay: index * 0.1,
                   }}
-                  className="border-b border-gray-200 last:border-b-0"
+                  className="border-b border-gray-200 last:border-b-0 rounded-lg px-4"
+                  style={
+                    (item as any)?.faqItemBackgroundColor
+                      ? {
+                          backgroundColor: (item as any).faqItemBackgroundColor,
+                          borderColor: "transparent",
+                        }
+                      : undefined
+                  }
                   data-tina-field={tinaField(item)}
                 >
                   <button
@@ -173,6 +181,16 @@ export const faqBlockSchema: Template = {
           label: "Ответ",
           name: "faqItemAnswer",
           required: true,
+        },
+        {
+          type: "string",
+          label: "Цвет фона",
+          name: "faqItemBackgroundColor",
+          description: "Фон пункта (опционально)",
+          ui: {
+            // @ts-ignore
+            component: ColorPickerInput,
+          },
         },
       ],
     },

@@ -242,7 +242,11 @@ export const Trial = ({ data }: { data: PageBlocksTrial }) => {
               <button
                 type="submit"
                 disabled={submitStatus === "loading"}
-                className="w-full bg-gray-800 text-white py-3 px-6 rounded-md font-medium hover:bg-gray-900 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full py-3 px-6 rounded-md font-medium transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                style={{
+                  backgroundColor: (data as any).trialFormButtonColor || "#1f2937",
+                  color: (data as any).trialFormButtonTextColor || "#ffffff",
+                }}
                 data-tina-field={tinaField(data, "trialFormButtonText")}
               >
                 {submitStatus === "loading"
@@ -368,6 +372,24 @@ export const trialBlockSchema: Template = {
       type: "string",
       label: "Текст кнопки",
       name: "trialFormButtonText",
+    },
+    {
+      type: "string",
+      label: "Цвет кнопки формы",
+      name: "trialFormButtonColor",
+      ui: {
+        // @ts-ignore
+        component: ColorPickerInput,
+      },
+    },
+    {
+      type: "string",
+      label: "Цвет текста кнопки формы",
+      name: "trialFormButtonTextColor",
+      ui: {
+        // @ts-ignore
+        component: ColorPickerInput,
+      },
     },
     {
       type: "string",

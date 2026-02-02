@@ -84,6 +84,7 @@ export const Trainings = ({ data }: { data: PageBlocksTrainings }) => {
             <div className="relative">
               <Swiper
                 modules={[Navigation]}
+                loop
                 spaceBetween={24}
                 slidesPerView={1}
                 breakpoints={{

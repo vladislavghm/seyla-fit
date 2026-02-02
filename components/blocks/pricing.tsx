@@ -12,32 +12,68 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
   return (
     <>
       {data.pricingSections &&
-        data.pricingSections.map((section, sectionIndex) => (
-          <Section
-            key={sectionIndex}
-            backgroundColor={
-              (section as any)?.backgroundColor ??
-              (data as any)?.backgroundColor
-            }
-            className="py-16 lg:py-24"
-            id={sectionIndex === 0 ? "tickets" : undefined}
-            data-tina-field={tinaField(section)}
-          >
-            <div className="mx-auto max-w-7xl px-6">
-              {/* Заголовок секции */}
-              {section?.pricingSectionTitle && (
-                <motion.h2
-                  initial={{ x: -50, opacity: 0 }}
-                  whileInView={{ x: 0, opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, ease: "easeOut" }}
-                  data-tina-field={tinaField(section, "pricingSectionTitle")}
-                  className="mb-12 text-center text-4xl font-bold lg:text-5xl"
-                >
-                  {section.pricingSectionTitle}
-                </motion.h2>
-              )}
+        data.pricingSections.map((section, sectionIndex) => {
+          const headerColor =
+            (section as any)?.headerColor ?? (data as any)?.headerColor ?? "#e06b6b";
+          return (
+            <React.Fragment key={sectionIndex}>
+              {/* Заголовок в стиле блока Направления */}
+              <div
+                id={sectionIndex === 0 ? "tickets" : undefined}
+                className="relative overflow-hidden py-8 px-6 lg:py-12 lg:px-12 w-full scroll-mt-20"
+                style={{ backgroundColor: headerColor }}
+                data-tina-field={tinaField(section as any, "headerColor" as any)}
+              >
+                <div className="mx-auto max-w-7xl">
+                  <div
+                    className="absolute inset-0 flex items-center justify-center"
+                    aria-hidden="true"
+                  >
+                    <h2
+                      className="text-6xl lg:text-8xl font-bold whitespace-nowrap"
+                      style={{ color: `${headerColor}30` }}
+                    >
+                      ЦЕНЫ
+                    </h2>
+                  </div>
+                  <div className="relative z-10 text-center">
+                    {section?.pricingSectionTitle && (
+                      <motion.h2
+                        initial={{ x: -50, opacity: 0 }}
+                        whileInView={{ x: 0, opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        data-tina-field={tinaField(section, "pricingSectionTitle")}
+                        className="mb-4 text-4xl lg:text-6xl font-bold text-white"
+                      >
+                        {section.pricingSectionTitle}
+                      </motion.h2>
+                    )}
+                    {(section as any)?.pricingSectionSubtitle && (
+                      <motion.p
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+                        data-tina-field={tinaField(section as any, "pricingSectionSubtitle")}
+                        className="text-lg lg:text-xl text-white/90"
+                      >
+                        {(section as any).pricingSectionSubtitle}
+                      </motion.p>
+                    )}
+                  </div>
+                </div>
+              </div>
 
+              <Section
+                backgroundColor={
+                  (section as any)?.backgroundColor ??
+                  (data as any)?.backgroundColor
+                }
+                className="py-16 lg:py-24"
+                data-tina-field={tinaField(section)}
+              >
+            <div className="mx-auto max-w-7xl px-6">
               {/* Тарифы секции */}
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {section?.pricingSectionItems &&
@@ -115,7 +151,11 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
                               item,
                               "pricingItemButtonText",
                             )}
-                            className="w-full bg-gray-800 text-white py-3 px-6 rounded-md font-medium hover:bg-gray-900 transition-colors"
+                            className="w-full py-3 px-6 rounded-md font-medium transition-colors hover:opacity-90"
+                            style={{
+                              backgroundColor: (item as any)?.pricingItemButtonColor || "#1f2937",
+                              color: (item as any)?.pricingItemButtonTextColor || "#ffffff",
+                            }}
                             onClick={() => {
                               if (item?.pricingItemButtonLink) {
                                 window.location.href =
@@ -132,7 +172,9 @@ export const Pricing = ({ data }: { data: PageBlocksPricing }) => {
               </div>
             </div>
           </Section>
-        ))}
+            </React.Fragment>
+          );
+        })}
     </>
   );
 };
@@ -143,9 +185,11 @@ export const pricingBlockSchema: Template = {
   ui: {
     previewSrc: "/blocks/pricing.png",
     defaultItem: {
+      headerColor: "#e06b6b",
       pricingSections: [
         {
           pricingSectionTitle: "Абонементы полного дня",
+          headerColor: "#e06b6b",
           pricingSectionItems: [
             {
               pricingItemTitle: "4 групповых занятия",
@@ -160,6 +204,16 @@ export const pricingBlockSchema: Template = {
     },
   },
   fields: [
+    {
+      type: "string",
+      label: "Цвет шапки (по умолчанию)",
+      name: "headerColor",
+      description: "Цвет шапки с заголовком, если не задан для секции",
+      ui: {
+        // @ts-ignore
+        component: ColorPickerInput,
+      },
+    },
     {
       type: "string",
       label: "Цвет фона",
@@ -197,6 +251,16 @@ export const pricingBlockSchema: Template = {
       fields: [
         {
           type: "string",
+          label: "Цвет шапки",
+          name: "headerColor",
+          description: "Цвет фона шапки с заголовком секции",
+          ui: {
+            // @ts-ignore
+            component: ColorPickerInput,
+          },
+        },
+        {
+          type: "string",
           label: "Цвет фона секции",
           name: "backgroundColor",
           description:
@@ -213,6 +277,11 @@ export const pricingBlockSchema: Template = {
           required: true,
           description:
             "Например: 'Абонементы полного дня' или 'Персональные тренировки'",
+        },
+        {
+          type: "string",
+          label: "Подзаголовок секции",
+          name: "pricingSectionSubtitle",
         },
         {
           type: "object",
@@ -267,6 +336,24 @@ export const pricingBlockSchema: Template = {
               label: "Ссылка кнопки",
               name: "pricingItemButtonLink",
               description: "URL для кнопки покупки",
+            },
+            {
+              type: "string",
+              label: "Цвет кнопки",
+              name: "pricingItemButtonColor",
+              ui: {
+                // @ts-ignore
+                component: ColorPickerInput,
+              },
+            },
+            {
+              type: "string",
+              label: "Цвет текста кнопки",
+              name: "pricingItemButtonTextColor",
+              ui: {
+                // @ts-ignore
+                component: ColorPickerInput,
+              },
             },
           ],
         },

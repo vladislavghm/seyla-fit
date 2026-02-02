@@ -155,23 +155,29 @@ export const Icon = ({
           ] as keyof typeof iconSizeClass
         ] || iconSizeClass.medium;
 
+  const isHexColor = color && /^#([0-9A-Fa-f]{3}){1,2}$/.test(color);
   const iconColor = color
     ? color === "primary"
       ? theme!.color
       : color
     : theme!.color;
 
-  // Fallback to a default color if the color doesn't exist in iconColorClass
+  // Fallback to a default color if the color doesn't exist in iconColorClass (and it's not hex)
   const safeIconColor =
-    iconColor && iconColorClass[iconColor as keyof typeof iconColorClass]
+    !isHexColor &&
+    iconColor &&
+    iconColorClass[iconColor as keyof typeof iconColorClass]
       ? iconColor
       : "blue";
+
+  const inlineColorStyle = isHexColor ? { color: color! } : undefined;
 
   if (style == "circle") {
     return (
       <div
-        {...(tinaField ? { "data-tina-field": tinaField } : {})} // only render data-tina-field if it exists
+        {...(tinaField ? { "data-tina-field": tinaField } : {})}
         className={`relative z-10 inline-flex items-center justify-center shrink-0 ${iconSizeClasses} rounded-full ${iconColorClass[safeIconColor].circle} ${className}`}
+        style={inlineColorStyle}
       >
         <IconSVG className="w-2/3 h-2/3" />
       </div>
@@ -186,8 +192,9 @@ export const Icon = ({
       iconColorClass[finalColor]?.regular || iconColorClass["blue"].regular;
     return (
       <IconSVG
-        {...(tinaField ? { "data-tina-field": tinaField } : {})} // only render data-tina-field if it exists
-        className={`${iconSizeClasses} ${iconColorClasses} ${className}`}
+        {...(tinaField ? { "data-tina-field": tinaField } : {})}
+        className={`${iconSizeClasses} ${isHexColor ? "" : iconColorClasses} ${className}`}
+        style={inlineColorStyle}
       />
     );
   }

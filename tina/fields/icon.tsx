@@ -5,7 +5,7 @@ import { BiChevronRight } from 'react-icons/bi';
 import { GoCircleSlash } from 'react-icons/go';
 import { Icon, IconOptions } from '../../components/icon';
 import { Popover, PopoverButton, Transition, PopoverPanel } from '@headlessui/react';
-import { ColorPickerInput } from './color';
+import { ColorPickerInput } from './colorPicker';
 
 const parseIconName = (name: string) => {
   const splitName = name.split(/(?=[A-Z])/);
@@ -24,7 +24,7 @@ export const IconPickerInput = wrapFieldsWithMeta(({ input }) => {
     });
   }, [filter]);
 
-  const inputLabel = Object.keys(IconOptions).includes(input.value) ? parseIconName(input.value) : 'Select Icon';
+  const inputLabel = Object.keys(IconOptions).includes(input.value) ? parseIconName(input.value) : 'Выберите иконку';
 
   //@ts-ignore
   const InputIcon = IconOptions[input.value] ? IconOptions[input.value] : null;
@@ -66,11 +66,11 @@ export const IconPickerInput = wrapFieldsWithMeta(({ input }) => {
                           onChange={(event: any) => {
                             setFilter(event.target.value);
                           }}
-                          placeholder='Filter...'
+                          placeholder='Поиск...'
                         />
                       </div>
                       {filteredBlocks.length === 0 && (
-                        <span className='relative text-center text-xs px-2 py-3 text-gray-300 bg-gray-50 italic'>No matches found</span>
+                        <span className='relative text-center text-xs px-2 py-3 text-gray-300 bg-gray-50 italic'>Ничего не найдено</span>
                       )}
                       {filteredBlocks.length > 0 && (
                         <div className='w-full grid grid-cols-6 auto-rows-auto p-2 overflow-y-auto'>
@@ -123,12 +123,12 @@ export const IconPickerInput = wrapFieldsWithMeta(({ input }) => {
 
 export const iconSchema = {
   type: 'object',
-  label: 'Icon',
+  label: 'Иконка',
   name: 'icon',
   fields: [
     {
       type: 'string',
-      label: 'Icon',
+      label: 'Иконка',
       name: 'name',
       ui: {
         component: IconPickerInput,
@@ -136,7 +136,7 @@ export const iconSchema = {
     },
     {
       type: 'string',
-      label: 'Color',
+      label: 'Цвет',
       name: 'color',
       ui: {
         component: ColorPickerInput,
@@ -144,15 +144,15 @@ export const iconSchema = {
     },
     {
       name: 'style',
-      label: 'Style',
+      label: 'Стиль',
       type: 'string',
       options: [
         {
-          label: 'Circle',
+          label: 'Круг',
           value: 'circle',
         },
         {
-          label: 'Float',
+          label: 'Обычный',
           value: 'float',
         },
       ],
