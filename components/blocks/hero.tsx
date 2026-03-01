@@ -32,21 +32,26 @@ export const Hero = ({ data }: { data: PageBlocksHero }) => {
     borderColor: buttonBg,
   };
 
-  // Стили для фона
-  const backgroundStyle: React.CSSProperties = {
-    backgroundColor: backgroundImage ? undefined : backgroundColor,
-    backgroundImage: backgroundImage ? `url(${backgroundImage})` : undefined,
-    backgroundSize: backgroundImage ? "cover" : undefined,
-    backgroundPosition: backgroundImage ? "center" : undefined,
-    backgroundRepeat: backgroundImage ? "no-repeat" : undefined,
-  };
-
   return (
     <section
-      className="relative h-screen flex items-center"
-      style={backgroundStyle}
-      data-tina-field={tinaField(data, "backgroundImage")}
+      className="relative h-screen flex items-center overflow-hidden"
+      style={!backgroundImage ? { backgroundColor } : undefined}
     >
+      {backgroundImage && (
+        <div
+          className="absolute inset-0"
+          data-tina-field={tinaField(data, "backgroundImage")}
+        >
+          <Image
+            src={backgroundImage}
+            alt=""
+            fill
+            priority
+            className="object-cover"
+            sizes="100vw"
+          />
+        </div>
+      )}
       {/* Overlay для читаемости текста на фоновом изображении */}
       {backgroundImage && <div className="absolute inset-0 bg-black/20" />}
 
