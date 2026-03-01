@@ -145,6 +145,7 @@ export const Trainings = ({ data }: { data: PageBlocksTrainings }) => {
                                   src={training.trainingImage}
                                   alt={training.trainingTitle || "Тренировка"}
                                   fill
+                                  priority={index < 3}
                                   className="object-cover"
                                   sizes="(max-width: 768px) 100vw, (max-width: 1280px) 33vw, 25vw"
                                   data-tina-field={tinaField(
