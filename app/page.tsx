@@ -5,8 +5,7 @@ import Layout from "@/components/layout/layout";
 import ClientPage from "@/components/blocks/client-page";
 import { ComingSoon } from "@/components/coming-soon";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 60;
 
 export default async function Home({
   searchParams,
