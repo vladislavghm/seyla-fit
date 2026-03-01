@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Image from "next/image";
 import type { Template } from "tinacms";
 import { TinaMarkdown } from "tinacms/dist/rich-text";
 import type { PageBlocksTrial } from "@/tina/__generated__/types";
@@ -73,22 +74,24 @@ export const Trial = ({ data }: { data: PageBlocksTrial }) => {
       ? Math.max(0, Math.min(1, data.trialOverlayOpacity / 100))
       : 0.3;
 
-  const backgroundStyle: React.CSSProperties = data.trialBackgroundImage
-    ? {
-        backgroundImage: `url(${data.trialBackgroundImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        backgroundAttachment: "fixed", // Фиксированный фон
-      }
-    : {};
-
   return (
-    <div
-      id="trial"
-      className="relative py-16 lg:py-24 min-h-[600px] scroll-mt-20"
-      style={backgroundStyle}
-    >
+    <div id="trial" className="relative py-16 lg:py-24 min-h-[600px] scroll-mt-20 overflow-hidden">
+      {/* Фоновое изображение */}
+      {data.trialBackgroundImage && (
+        <div
+          className="absolute inset-0"
+          data-tina-field={tinaField(data, "trialBackgroundImage")}
+        >
+          <Image
+            src={data.trialBackgroundImage}
+            alt=""
+            fill
+            className="object-cover"
+            sizes="100vw"
+          />
+        </div>
+      )}
+
       {/* Оверлей с настраиваемой прозрачностью */}
       {data.trialBackgroundImage && (
         <div
@@ -105,14 +108,6 @@ export const Trial = ({ data }: { data: PageBlocksTrial }) => {
           style={{
             backgroundColor: (data as any).backgroundColor || "transparent",
           }}
-        />
-      )}
-
-      {/* Tina field для фонового изображения */}
-      {data.trialBackgroundImage && (
-        <div
-          className="hidden"
-          data-tina-field={tinaField(data, "trialBackgroundImage")}
         />
       )}
 
@@ -310,7 +305,7 @@ export const trialBlockSchema: Template = {
       type: "image",
       label: "Фоновое изображение",
       name: "trialBackgroundImage",
-      description: "Фоновое изображение для блока (будет с fixed attachment)",
+      description: "Фоновое изображение для блока",
       // @ts-ignore
       uploadDir: () => "trial",
     },
